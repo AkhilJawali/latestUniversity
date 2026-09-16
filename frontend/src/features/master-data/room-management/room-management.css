@@ -1,0 +1,32 @@
+/* A4-430 — Room & Lab management feature styles. Reuses global card/table/modal/btn
+   classes; adds the filters bar and the modal form-row layout. */
+
+.room-management .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.room-management .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.room-management .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted, #64748b);
+}
+
+/* Two-up field rows inside the room modal. */
+.modal .form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.modal .form-row .form-field {
+  flex: 1;
+}

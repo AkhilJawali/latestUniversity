@@ -1,0 +1,35 @@
+/* A4-410 — Campus hierarchy feature styles. Reuses global card/table/modal
+   classes from the app; only adds the drill-down layout and breadcrumb. */
+
+.campus-hierarchy .hierarchy-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.campus-hierarchy .breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 0 20px;
+  font-size: 14px;
+}
+
+.campus-hierarchy .crumb {
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: var(--muted-bg, #eef1f5);
+  color: var(--muted-fg, #4a5568);
+}
+
+.campus-hierarchy .crumb--active {
+  background: var(--primary-bg, #dbeafe);
+  color: var(--primary-fg, #1e40af);
+  font-weight: 600;
+}
+
+.campus-hierarchy .link-btn--active {
+  font-weight: 600;
+  text-decoration: underline;
+}

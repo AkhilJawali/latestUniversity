@@ -1,0 +1,32 @@
+# ---- Build output ----
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+
+# Node / frontend
+node_modules/
+dist/
+coverage/
+*.local
+
+# ---- Env / secrets ----
+.env
+.env.*
+*.pem
+*.key
+application-secret*.yml
+# Contains live GitHub + Jira API tokens — never commit.
+.kiro/settings/mcp.json
+
+# ---- IDE / OS ----
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+logs/

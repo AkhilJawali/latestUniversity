@@ -1,0 +1,141 @@
+/* A4-445 — Time-Slot Grid feature styles. Reuses global card/table/modal/btn classes;
+   adds the filters bar, inline notice, grid header, slot-row editor, slot type badges
+   (teaching/break/lunch distinction, PD-8/AC-3), and the day-preview bar. */
+
+.time-slot-grid .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.time-slot-grid .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.time-slot-grid .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted, #64748b);
+}
+
+/* Inline status banner standing in for toasts (OQ-6). Auto-clears on success. */
+.time-slot-grid .inline-notice {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.time-slot-grid .inline-notice--success {
+  background: var(--color-success-bg, #ecfdf5);
+  color: var(--color-success-fg, #065f46);
+  border: 1px solid var(--color-success-border, #a7f3d0);
+}
+
+.time-slot-grid .inline-notice--error {
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger-fg, #991b1b);
+  border: 1px solid var(--color-danger-border, #fecaca);
+}
+
+/* Grid header: title (or inline rename) on the left, actions on the right. */
+.time-slot-grid .grid-header {
+  align-items: center;
+}
+
+.time-slot-grid .grid-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.time-slot-grid .rename-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Day-preview bar. */
+.time-slot-grid .preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin: 12px 0;
+}
+
+.time-slot-grid .preview-note {
+  font-size: 13px;
+  color: var(--color-muted, #64748b);
+  margin: 0;
+}
+
+/* Slot-row editor (in GridCreateModal): time + time + type + day + label + remove. */
+.modal .slot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.modal .slot-row .slot-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.modal .form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.modal .form-row .form-field {
+  flex: 1;
+}
+
+/* Slot-type badges — teaching vs break/lunch distinction (PD-8, AC-3), >=3:1 contrast. */
+.time-slot-grid .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.time-slot-grid .badge--teaching {
+  background: var(--color-primary-bg, #eff6ff);
+  color: var(--color-primary-fg, #1e40af);
+}
+
+.time-slot-grid .badge--break {
+  background: var(--color-warning-bg, #fffbeb);
+  color: var(--color-warning-fg, #92400e);
+}
+
+.time-slot-grid .badge--lunch {
+  background: var(--color-accent-bg, #f5f3ff);
+  color: var(--color-accent-fg, #5b21b6);
+}
+
+/* Subtle row tint for non-teaching slots so the distinction reads in the timeline. */
+.time-slot-grid .slot-row--break td,
+.time-slot-grid .slot-row--lunch td {
+  background: var(--color-muted-bg, #f8fafc);
+}
+
+/* Visually-hidden label for the inline rename field. */
+.time-slot-grid .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

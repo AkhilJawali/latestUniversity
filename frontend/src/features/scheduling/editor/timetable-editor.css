@@ -1,0 +1,212 @@
+/* A4-15 — Drag-and-drop timetable editor styles. Reuses global page/btn/notice classes;
+   adds the editor layout (grid + conflict panel), the day×slot grid, session cards with
+   state treatments (icon+text+color, not color-only — NFR-2), and the alternatives popover. */
+
+.timetable-editor .editor-banner {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.timetable-editor .editor-banner--unsaved {
+  background: var(--color-warning-bg, #fffbeb);
+  color: var(--color-warning-fg, #92400e);
+  border: 1px solid var(--color-warning-border, #fde68a);
+}
+
+.timetable-editor .inline-notice {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.timetable-editor .inline-notice--success {
+  background: var(--color-success-bg, #ecfdf5);
+  color: var(--color-success-fg, #065f46);
+  border: 1px solid var(--color-success-border, #a7f3d0);
+}
+.timetable-editor .inline-notice--error {
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger-fg, #991b1b);
+  border: 1px solid var(--color-danger-border, #fecaca);
+}
+
+.timetable-editor .editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+.timetable-editor .editor-toolbar__version {
+  font-size: 13px;
+  color: var(--color-muted, #64748b);
+  margin-right: auto;
+}
+
+/* Grid + side conflict panel. */
+.timetable-editor .editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .timetable-editor .editor-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.timetable-editor .editor-grid-scroll {
+  overflow-x: auto;
+}
+.timetable-editor .editor-grid {
+  border-collapse: collapse;
+  width: 100%;
+}
+.timetable-editor .editor-grid th,
+.timetable-editor .editor-grid td {
+  border: 1px solid var(--color-border, #e2e8f0);
+  padding: 4px;
+  vertical-align: top;
+  min-width: 120px;
+}
+.timetable-editor .editor-grid__corner,
+.timetable-editor .editor-grid__slot {
+  background: var(--color-muted-bg, #f8fafc);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.timetable-editor .editor-grid__cell {
+  height: 72px;
+}
+.timetable-editor .editor-grid__cell:focus {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: -2px;
+}
+.timetable-editor .editor-grid__cell--conflict {
+  background: var(--color-danger-bg, #fef2f2);
+  outline: 2px solid var(--color-danger, #dc2626);
+  outline-offset: -2px;
+}
+.timetable-editor .editor-grid__cell--pending {
+  background: var(--color-muted-bg, #f8fafc);
+}
+
+/* Session cards. State is icon+text (in the card) plus these color treatments. */
+.timetable-editor .session-card {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-left: 3px solid var(--color-primary, #2563eb);
+  border-radius: 4px;
+  padding: 6px 8px;
+  background: #fff;
+  cursor: grab;
+  font-size: 12px;
+}
+.timetable-editor .session-card:focus {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: 1px;
+}
+.timetable-editor .session-card--selected {
+  box-shadow: 0 0 0 2px var(--color-primary, #2563eb);
+}
+.timetable-editor .session-card--conflict {
+  border-left-color: var(--color-danger, #dc2626);
+  background: var(--color-danger-bg, #fef2f2);
+}
+.timetable-editor .session-card--pending {
+  opacity: 0.7;
+}
+.timetable-editor .session-card--unsaved {
+  border-left-color: var(--color-warning, #d97706);
+}
+.timetable-editor .session-card--locked {
+  border-left-color: var(--color-muted, #64748b);
+  background: var(--color-muted-bg, #f8fafc);
+}
+.timetable-editor .session-card__title {
+  font-weight: 600;
+}
+.timetable-editor .session-card__meta {
+  color: var(--color-muted, #475569);
+}
+.timetable-editor .session-card__state {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Conflict panel. */
+.timetable-editor .conflict-panel {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
+  padding: 12px;
+}
+.timetable-editor .conflict-panel h3 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.timetable-editor .conflict-panel section + section {
+  margin-top: 16px;
+}
+.timetable-editor .conflict-panel__empty {
+  font-size: 13px;
+  color: var(--color-muted, #64748b);
+  margin: 0;
+}
+.timetable-editor .conflict-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.timetable-editor .conflict-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--color-danger-border, #fecaca);
+  border-radius: 4px;
+  background: var(--color-danger-bg, #fef2f2);
+}
+.timetable-editor .conflict-row__type {
+  font-weight: 600;
+  font-size: 13px;
+}
+.timetable-editor .conflict-row__desc {
+  font-size: 12px;
+  color: var(--color-muted, #475569);
+}
+
+/* Alternatives popover. */
+.timetable-editor .alternatives-popover {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 280px;
+  background: #fff;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  z-index: 50;
+}
+.timetable-editor .alternatives-popover__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.timetable-editor .alternatives-popover__note {
+  font-size: 12px;
+  color: var(--color-muted, #64748b);
+  margin: 4px 0 8px;
+}
+.timetable-editor .alternatives-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

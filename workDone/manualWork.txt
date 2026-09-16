@@ -1,0 +1,57 @@
+MANUAL WORK — What We Do By Hand
+
+This note explains the manual steps we handle ourselves while Kiro (the AI) does
+the heavy lifting. Kiro is fast but sometimes forgets or ignores the rules we set,
+so our main job is to review its work carefully and correct it.
+
+--------------------------------------------------------------------
+1. PROJECT SETUP IN JIRA
+--------------------------------------------------------------------
+- Create the project in Jira.
+- Kiro generates user stories from the BRD.
+- Cross-check those stories: give the BRD to Claude, have it read through, then
+  compare against Kiro's stories to find anything missing.
+- If something is missing or wrong, tell Kiro the exact gaps and have it fix the
+  stories.
+- Verify the stories, approve them, then ask Kiro to upload them to Jira under the
+  correct project — making sure the Jira structure matches our steering file.
+
+--------------------------------------------------------------------
+2. THE ONGOING JOB: REVIEW EVERYTHING KIRO DOES
+--------------------------------------------------------------------
+- Kiro often skips or forgets the steering rules. When we point out an issue, it
+  re-checks and fixes it.
+- We keep repeating this review-and-fix loop to catch as many errors as possible.
+- From the recurring issues we spotted (missing points, over-engineering, etc.), we
+  created new rules and added them to the steering file to prevent them next time.
+- This has brought the error rate under ~10%, but everything Kiro produces should
+  still be checked thoroughly.
+
+--------------------------------------------------------------------
+3. STORY WORKFLOW (once a story is assigned to us)
+--------------------------------------------------------------------
+The full flow and structure are defined in the BRD-to-Jira steering file. In short:
+
+STEP A — Requirement Document
+- Create the requirement doc for the assigned story.
+- Review it 3 ways:
+    1. AI review (Claude)
+    2. Manual review (the person the story is assigned to)
+    3. Lead review (final approval)
+- If Claude/we find issues, missing items, or over-thinking, confirm them, give the
+  details to Kiro, and have it fix the doc. Repeat until clean.
+- Only after the lead approves the requirement doc can we move to the design doc.
+
+STEP B — Design Document
+- Create the design doc following the SAME flow as the requirement doc:
+    AI review -> manual review -> give differences to Kiro -> fix.
+- Again, reviewed at least 3 times (Claude, assignee, lead) before approval.
+
+--------------------------------------------------------------------
+KEY RULE
+--------------------------------------------------------------------
+Every document (stories, requirement, design) is reviewed at least 3 times by
+default before it is approved:
+  1. AI review (Claude)
+  2. Manual review (assignee)
+  3. Lead review (final sign-off)

@@ -1,0 +1,57 @@
+/* A4-435 — Schedulable Asset management feature styles. Reuses global card/table/modal/
+   btn classes; adds the filters bar, modal form-row, two-step, and the window-row editor. */
+
+.asset-management .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.asset-management .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.asset-management .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted, #64748b);
+}
+
+/* Wider modal to fit the windows editor comfortably. */
+.modal.modal--wide {
+  max-width: 640px;
+  width: 92vw;
+}
+
+.modal .form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.modal .form-row .form-field {
+  flex: 1;
+}
+
+.modal .two-step {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Availability-window editor rows: day + start + end + remove. */
+.modal .window-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.modal .window-row .window-error {
+  flex-basis: 100%;
+  margin: 0;
+}

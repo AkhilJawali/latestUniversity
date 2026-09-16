@@ -1,0 +1,80 @@
+/* A4-440 — Academic Calendar management feature styles. Reuses global card/table/modal/
+   btn classes; adds the filters bar, modal form-row, sub-section spacing, scope badge,
+   the pattern editor form, and the inline status notice. */
+
+.academic-calendar .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.academic-calendar .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.academic-calendar .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted, #64748b);
+}
+
+/* Inline status banner standing in for toasts (FR-9.3). Auto-clears on success. */
+.academic-calendar .inline-notice {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.academic-calendar .inline-notice--success {
+  background: var(--color-success-bg, #ecfdf5);
+  color: var(--color-success-fg, #065f46);
+  border: 1px solid var(--color-success-border, #a7f3d0);
+}
+
+.academic-calendar .inline-notice--error {
+  background: var(--color-danger-bg, #fef2f2);
+  color: var(--color-danger-fg, #991b1b);
+  border: 1px solid var(--color-danger-border, #fecaca);
+}
+
+/* Sub-lists within the calendar detail panel (holidays / exam windows / orientation). */
+.academic-calendar .calendar-detail .subsection {
+  margin-top: 20px;
+}
+
+.academic-calendar .calendar-detail .subsection h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Holiday scope badge. */
+.academic-calendar .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--color-muted-bg, #f1f5f9);
+  color: var(--color-muted, #475569);
+}
+
+/* Working-day pattern editor form. */
+.academic-calendar .pattern-form {
+  max-width: 520px;
+}
+
+/* Two-up date rows inside modals. */
+.modal .form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.modal .form-row .form-field {
+  flex: 1;
+}

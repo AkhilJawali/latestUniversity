@@ -1,0 +1,97 @@
+/* A4-415 — Course management feature styles. Reuses global card/table/modal/btn
+   classes from the app; only adds the filters bar, the manage-selector hint row,
+   and the side-by-side prerequisite / cross-listing panel layout. */
+
+.course-management .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.course-management .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.course-management .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-fg, #4a5568);
+}
+
+.course-management .table-hint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 20px 0 12px;
+  font-size: 14px;
+}
+
+.course-management .table-hint label {
+  font-weight: 600;
+  color: var(--muted-fg, #4a5568);
+}
+
+.course-management .course-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+  .course-management .course-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.course-management .inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0 12px;
+}
+
+.course-management .chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+
+.course-management .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px 2px 10px;
+  border-radius: 12px;
+  background: var(--muted-bg, #eef1f5);
+  color: var(--muted-fg, #4a5568);
+  font-size: 13px;
+}
+
+.course-management .chip-remove {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--muted-fg, #4a5568);
+  padding: 0 2px;
+}
+
+.course-management .chip-remove:hover {
+  color: var(--destructive-fg, #b91c1c);
+}
+
+.course-management .hint {
+  font-size: 13px;
+  color: var(--muted-fg, #4a5568);
+}

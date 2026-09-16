@@ -1,0 +1,77 @@
+DAILY WORK SUMMARY — Frontend Master Data (Jira project A4 / UTMS)
+Date: 2026-09-04
+
+------------------------------------------------------------
+WORK COMPLETED TODAY
+------------------------------------------------------------
+- Created 8 frontend master-data user stories from the backend stories, and assigned them to me.
+- Took 4 stories through the full lifecycle (requirement -> design -> dev -> unit test -> coverage -> code review -> testing -> Done):
+    A4-410  Campus Hierarchy Master Data (CRUD)      — DONE
+    A4-415  Course Management (CRUD)                  — DONE
+    A4-420  Faculty Profile Management (CRUD)         — DONE
+            (also added a small backend endpoint GET /faculty/{id}/campuses to unblock the campus panel)
+    A4-425  Faculty Availability & Preferences (CRUD) — DONE
+- Improved the UI across the app: one shared table structure with built-in search + column
+  filters used everywhere, cleaner table styling, and a sliding-door left menu that expands
+  on hover and collapses on mouse-out. Smoother overall UX.
+
+------------------------------------------------------------
+NOT COMPLETED / LEFT
+------------------------------------------------------------
+    A4-430  Room and Lab Master Data (CRUD)          — TO DO
+    A4-435  Schedulable Asset Master Data (CRUD)     — TO DO
+    A4-440  Academic Calendar Management (CRUD)       — TO DO
+    A4-445  Time-Slot Grid Configuration (CRUD)       — TO DO
+
+------------------------------------------------------------
+TOKEN (CREDIT) CONSUMPTION — per story and its sub-tasks
+Source: docs/tokenConsumption-2.md (Est. Credits Used per prompt)
+------------------------------------------------------------
+Tracked by prompt, grouped by the story lifecycle step (requirement, design,
+design-approval+dev-subtasks+code-review, testing, testing-approval).
+
+Tasks ...................................... Token Consumed
+Setup (all stories):
+    Create user stories .................... 35.82
+    Assign tasks to me ..................... 9.82
+
+A4-410:
+    Requirement doc ........................ 7.76
+    Design doc ............................. 10.94
+    Design approval + dev subtasks + review  94.07
+    Testing ................................ 9.82
+    Testing approved ....................... 5.50
+    Subtotal ............................... ~128.09
+
+A4-415:
+    Requirement doc ........................ 9.03
+    Design doc ............................. 10.12
+    Design approval + dev subtasks + review  54.07
+    Testing ................................ 3.90
+    Testing approved ....................... 1.93
+    Subtotal ............................... ~79.05
+
+A4-420:
+    Requirement doc ........................ 7.81
+    Open-question fix (backend endpoint) ... 10.25
+    Design doc ............................. 7.12
+    Design approval + dev subtasks + review  80.07
+    Testing ................................ 9.02
+    Testing approved ....................... 1.93
+    Subtotal ............................... ~116.20
+
+A4-425:
+    Requirement doc ........................ ~13.08
+    Design doc ............................. ~10.19
+    Design approval + dev subtasks + review  86.07
+    Testing ................................ 8.57
+    Testing approved ....................... 4.84
+    Subtotal ............................... ~122.75
+
+UI improvement (all screens + shared table) ~31.00
+
+Observation: the heaviest step in every story is
+"design approval + create dev sub-tasks + code review" (~54-94 credits each),
+since that step writes all the code, runs the AI code review, fixes issues,
+and produces the coverage/test docs. Requirement, design, and testing steps
+are comparatively light (~2-13 credits).

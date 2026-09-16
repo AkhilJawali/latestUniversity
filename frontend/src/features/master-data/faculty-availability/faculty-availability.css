@@ -1,0 +1,63 @@
+/* A4-425 — Faculty availability feature styles. Reuses global card/table/modal/btn
+   classes; adds the faculty selector bar, the two-column windows/preferences layout,
+   and the modal time-row / preferences-form layout. */
+
+.faculty-availability .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin: 16px 0 20px;
+}
+
+.faculty-availability .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.faculty-availability .filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-fg, #4a5568);
+}
+
+.faculty-availability .availability-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .faculty-availability .availability-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The windows section is the "hard" constraint area — a subtle left accent to
+   distinguish it from the soft preferences card (FR-5). */
+.faculty-availability .windows-section .card {
+  border-left: 3px solid var(--destructive-fg, #b91c1c);
+}
+
+.faculty-availability .prefs-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faculty-availability .form-message {
+  font-size: 13px;
+  color: var(--success-fg, #15803d);
+}
+
+/* Time inputs sit side-by-side in the window modal. */
+.modal .form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.modal .form-row .form-field {
+  flex: 1;
+}
