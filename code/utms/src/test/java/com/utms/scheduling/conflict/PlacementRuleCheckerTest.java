@@ -1,11 +1,6 @@
 package com.utms.scheduling.conflict;
 
-import com.utms.masterdata.batch.Batch;
-import com.utms.masterdata.batch.BatchRepository;
-import com.utms.masterdata.room.Room;
-import com.utms.masterdata.room.RoomRepository;
-import com.utms.masterdata.timeslot.SlotDefinition;
-import com.utms.masterdata.timeslot.SlotDefinitionRepository;
+import com.utms.conflict.detection.PlacementRuleChecker;
 import com.utms.scheduling.engine.enums.RecurrenceType;
 import com.utms.scheduling.engine.enums.WeekGroup;
 import com.utms.scheduling.engine.model.FacultyWorkloadLimits;
@@ -13,8 +8,6 @@ import com.utms.scheduling.engine.service.RecurrenceOverlapEvaluator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +22,6 @@ import static org.mockito.Mockito.when;
  */
 class PlacementRuleCheckerTest {
 
-    private RoomRepository roomRepository;
-    private BatchRepository batchRepository;
-    private SlotDefinitionRepository slotDefinitionRepository;
     private FacultyLimitProvider facultyLimitProvider;
     private PlacementRuleChecker checker;
 
@@ -40,14 +30,10 @@ class PlacementRuleCheckerTest {
 
     @BeforeEach
     void setUp() {
-        roomRepository = mock(RoomRepository.class);
-        batchRepository = mock(BatchRepository.class);
-        slotDefinitionRepository = mock(SlotDefinitionRepository.class);
         facultyLimitProvider = mock(FacultyLimitProvider.class);
         // Default: no faculty limits (data-pending); capacity lookups empty (pass).
         when(facultyLimitProvider.getLimits(anyLong())).thenReturn(Optional.empty());
-        checker = new PlacementRuleChecker(roomRepository, batchRepository, slotDefinitionRepository,
-                new RecurrenceOverlapEvaluator(), facultyLimitProvider);
+        checker = new PlacementRuleChecker(facultyLimitProvider, new RecurrenceOverlapEvaluator());
     }
 
     private ProposedPlacementRequest placement(Long faculty, Long room, Long batch) {

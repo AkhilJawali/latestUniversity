@@ -21,6 +21,11 @@ import java.util.Optional;
  */
 public interface FacultyLimitProvider {
 
-    /** Workload limits for a faculty, or empty if none are configured/available. */
+    /**
+     * Get workload limits for a faculty member.
+     *
+     * @param facultyId the faculty ID
+     * @return the limits if configured/available, otherwise empty
+     */
     Optional<FacultyWorkloadLimits> getLimits(Long facultyId);
 }

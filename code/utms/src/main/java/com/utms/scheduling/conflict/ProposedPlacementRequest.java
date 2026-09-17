@@ -14,6 +14,9 @@ import lombok.Setter;
  * optional: when present it identifies the session being moved so it can be
  * self-excluded from the draft's occupancy (a move onto its own slot is not a
  * self-conflict).
+ *
+ * <p>Design spec: {facultyId!, roomId!, batchId!, sectionId?, dayOfWeek!,
+ * slotDefinitionId!, durationMinutes!, sessionId?} (! = required/positive)
  */
 @Getter
 @Setter

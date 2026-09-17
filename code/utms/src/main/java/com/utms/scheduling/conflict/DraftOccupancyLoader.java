@@ -34,6 +34,12 @@ public class DraftOccupancyLoader {
     private final ScheduledSessionRepository sessionRepository;
     private final SlotDefinitionRepository slotDefinitionRepository;
 
+    /**
+     * Load the occupancy index for a draft from persisted sessions.
+     *
+     * @param draftId the draft ID
+     * @return the populated occupancy index
+     */
     @Transactional(readOnly = true)
     public DraftOccupancyIndex load(Long draftId) {
         List<ScheduledSession> sessions = sessionRepository.findByDraftIdAndDeletedAtIsNull(draftId);
@@ -58,6 +64,10 @@ public class DraftOccupancyLoader {
         return index;
     }
 
+    /**
+     * Resolve slot duration in hours, with caching to avoid repeated lookups.
+     * Falls back to 1.0h if the slot definition is not found (degrades gracefully).
+     */
     private double resolveSlotHours(Long slotDefinitionId, Map<Long, Double> cache) {
         return cache.computeIfAbsent(slotDefinitionId, id -> {
             Double hours = slotDefinitionRepository.findByIdAndDeletedAtIsNull(id)
@@ -67,8 +77,8 @@ public class DraftOccupancyLoader {
             if (hours == null) {
                 // Fallback so workload math stays defined; logged so the degrade is
                 // observable rather than silently fabricating a duration.
-                log.warn("Slot definition {} not found/resolvable; defaulting occupancy "
-                        + "duration to 1.0h for conflict detection", id);
+                log.warn("Slot definition {} not found/resolvable; defaulting occupancy " +
+                        "duration to 1.0h for conflict detection", id);
                 return 1.0;
             }
             return hours;

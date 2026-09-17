@@ -1,6 +1,8 @@
 package com.utms.scheduling.conflict;
 
 import com.utms.common.exception.EntityNotFoundException;
+import com.utms.conflict.detection.ConflictDetectionService;
+import com.utms.conflict.detection.PlacementRuleChecker;
 import com.utms.scheduling.engine.entity.TimetableDraft;
 import com.utms.scheduling.engine.enums.RecurrenceType;
 import com.utms.scheduling.engine.repository.TimetableDraftRepository;
