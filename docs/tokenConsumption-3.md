@@ -9,6 +9,9 @@ response : Est. Credits Used: 8.23 Elapsed time: 2m 33s
 promp 1 : approved the design doc n asked to create the dev sub-tasks, and code .
 response : Est. Credits Used: 35.93 Elapsed time: 9m 4s
 
+promp 1 : unit test, code coverage, code review.
+response : Est. Credits Used: 51.915 Elapsed time: 28m 5s
+
 
 
 A4-435 -------------------------------------------

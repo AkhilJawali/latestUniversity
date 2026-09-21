@@ -2,7 +2,11 @@
 // (toBeInTheDocument, etc.) and cleans up the DOM after each test.
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
+
+// Mock HTMLDialogElement methods not available in jsdom (A4-430)
+HTMLDialogElement.prototype.showModal = vi.fn();
+HTMLDialogElement.prototype.close = vi.fn();
 
 afterEach(() => {
   cleanup();
