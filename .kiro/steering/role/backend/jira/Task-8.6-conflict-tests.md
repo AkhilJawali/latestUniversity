@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.6: Property Tests for Conflict Detection
 
 ## Jira Reference

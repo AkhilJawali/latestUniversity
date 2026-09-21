@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.11: Implement Master Data REST API Routes
 
 ## Jira Reference

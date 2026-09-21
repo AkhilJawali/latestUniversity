@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.4: Implement WebSocket Real-Time Conflict Feedback
 
 ## Jira Reference

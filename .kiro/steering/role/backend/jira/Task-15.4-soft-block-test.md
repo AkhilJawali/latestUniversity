@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 15.4: Property Test for Soft-Block Override
 
 ## Jira Reference

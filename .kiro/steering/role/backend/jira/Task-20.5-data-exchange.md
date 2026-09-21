@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.5: Implement Data Exchange and External Sync
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.6: Implement Academic Calendar Service
 
 ## Jira Reference

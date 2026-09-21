@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.8: Property Test for Substitute Faculty
 
 ## Jira Reference

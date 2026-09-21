@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.13: Property Tests for Exam Scheduling
 
 ## Jira Reference

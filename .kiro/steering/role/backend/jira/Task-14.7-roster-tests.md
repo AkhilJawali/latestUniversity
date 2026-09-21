@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.7: Property Tests for Add/Drop Roster
 
 ## Jira Reference

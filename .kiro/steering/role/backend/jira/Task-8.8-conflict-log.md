@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.8: Implement Conflict Log Persistence
 
 ## Jira Reference

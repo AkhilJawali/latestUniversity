@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.10: Property Tests for Audit Trail
 
 ## Jira Reference

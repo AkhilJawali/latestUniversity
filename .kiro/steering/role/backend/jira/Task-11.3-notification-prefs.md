@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 11.3: Implement User Notification Preferences
 
 ## Jira Reference

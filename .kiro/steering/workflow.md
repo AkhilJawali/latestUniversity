@@ -86,16 +86,19 @@ The 4 default subtasks are created when the story is created. Development subtas
 #### Code Coverage Document
 
 - Location: `docs/code-coverage/{ISSUE-KEY}-{task-id}-coverage.md`
-- Must include: task ID, story key, coverage percentage, covered classes/methods, uncovered areas.
+- Must include: task ID, story key, coverage percentage, and uncovered areas.
+- The developer runs the coverage tool locally. The document is built from the tool's summary output only; the AI does not estimate or narrate per-class tables (see `shared/token-efficiency.md` T4).
 
 ### 5. Code Review (Default Subtask 3)
 
 - After development and unit testing, the code goes for Code Review.
+- Before the review, the developer runs build, lint, and tests locally.
+- The AI review is a single pass over the story's `git diff` or changed files only (see `shared/token-efficiency.md` T2, T3).
 - **No issues found → Continue to Testing.**
 - **Issues found:**
   - Issues are documented in: `docs/code-review/{ISSUE-KEY}-code-review.md`
   - Issues are fixed and retested.
-  - Code goes for review again until clean.
+  - Do not run another AI review pass unless a fix introduces a new build or test failure; the human reviewer decides whether another review round is needed.
 
 #### Code Review Document
 
@@ -219,7 +222,7 @@ Kiro must:
 3. **Never proceed to code review** until all development subtasks are done and coverage doc exists.
 4. **Never mark testing as done** if there are unresolved issues.
 5. **Create development subtasks in Jira** under the Story (same level as default subtasks) based on the approved design. Always use `"parent": {"id": "<story_numeric_id>"}`.
-6. **Generate coverage documents** after unit testing completes.
+6. **Generate coverage documents** after unit testing completes, using the coverage tool's output (the developer runs the tool; Kiro does not compute or estimate coverage).
 7. **Document code review issues** in `docs/code-review/` if any are found.
 8. **Document testing issues** in `docs/testing/` if any are found.
 9. **Always attach documents to Jira subtasks.** When a document (requirement, design, unit test results, code coverage, code review) is generated:
@@ -228,8 +231,8 @@ Kiro must:
     - Once the document is reviewed and approved locally by the member, upload the `.md` file to the corresponding Jira subtask in the Attachments section.
     - This is mandatory — no subtask should be submitted for lead review without the `.md` attached in Jira.
 9. **Transition subtasks to Done** in Jira immediately after completing the code changes for each subtask. Never leave a completed subtask in "To Do" or "In Progress".
-10. **Generate a unit test results document** after completing unit tests. File: `docs/testing/{ISSUE-KEY}-unit-test-results.md`. Upload it to the Unit Test subtask description in Jira, add a comment referencing the file, attach the file to the subtask, then transition to Done.
-11. **Generate a code coverage document** after unit testing completes. File: `docs/code-coverage/{ISSUE-KEY}-{task-id}-coverage.md`. Must include: covered classes/methods, coverage percentage (estimated or actual), uncovered gaps with plan, and requirement traceability. Upload it to the Code Coverage subtask description in Jira, add a comment, attach the file, then transition to Done.
+10. **Generate a unit test results document** after completing unit tests. File: `docs/testing/{ISSUE-KEY}-unit-test-results.md`. Build it from the test runner's summary (totals, pass/fail, and failing test names only). Put a short summary (not the full document) in the Unit Test subtask description, add a comment referencing the file, attach the file to the subtask, then transition to Done.
+11. **Generate a code coverage document** after unit testing completes. File: `docs/code-coverage/{ISSUE-KEY}-{task-id}-coverage.md`. Build it from the coverage tool's summary report (the developer runs the tool). Must include: actual coverage percentage (line/branch) from the tool, uncovered gaps with plan, and requirement traceability. Do not estimate coverage or list every covered class/method. Put a short summary in the Code Coverage subtask description, add a comment, attach the file, then transition to Done.
 12. **Always update Jira status** based on subtask type:
     - **Requirement Generation / Design Derivation subtasks:**
       - Created → **To Do** (default)

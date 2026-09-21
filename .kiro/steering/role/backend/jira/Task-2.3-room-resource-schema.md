@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.3: Room Resource Schema
 
 ## Jira Reference

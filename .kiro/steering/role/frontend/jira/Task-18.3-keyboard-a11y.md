@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.3: Implement Keyboard-Accessible Alternatives
 
 ## Jira Reference

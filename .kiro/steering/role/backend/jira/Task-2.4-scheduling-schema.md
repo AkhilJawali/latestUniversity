@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.4: Scheduling Schema
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.1: Campus Schema
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 9.2: Implement Version Comparison and Diff
 
 ## Jira Reference

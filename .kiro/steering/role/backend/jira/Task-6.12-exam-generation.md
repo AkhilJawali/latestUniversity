@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.12: Implement Exam Timetable Generation
 
 ## Jira Reference

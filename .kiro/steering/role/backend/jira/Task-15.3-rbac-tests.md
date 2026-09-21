@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 15.3: Property Tests for RBAC Enforcement
 
 ## Jira Reference

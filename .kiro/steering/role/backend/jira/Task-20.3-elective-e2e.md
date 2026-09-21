@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.3: Wire Elective Registration End-to-End Flow
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.5: Exam Schema
 
 ## Jira Reference

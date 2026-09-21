@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.9: Notification Schema
 
 ## Jira Reference

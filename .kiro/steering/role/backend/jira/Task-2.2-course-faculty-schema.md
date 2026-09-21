@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.2: Course Faculty Schema
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.6: Write Integration Tests for End-to-End Workflows
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.2: Implement Full Draft Validation
 
 ## Jira Reference

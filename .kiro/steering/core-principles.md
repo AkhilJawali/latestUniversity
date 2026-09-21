@@ -1,3 +1,9 @@
+---
+inclusion: auto
+name: core-principles
+description: Mandatory accuracy and verification principles (P1-P6), including the pre-composition checklists for Requirement and Design Documents. Use for BRD analysis, story creation, requirement or design document work, coverage or gap analysis, and any verification of generated documents.
+---
+
 # Core Principles — Strictly Mandatory
 
 These principles are **hard constraints** that override all other considerations. They apply to every task, every steering file, every output. No exceptions.

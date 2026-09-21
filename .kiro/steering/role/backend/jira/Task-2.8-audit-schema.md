@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.8: Audit Schema
 
 ## Jira Reference

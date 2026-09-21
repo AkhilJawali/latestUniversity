@@ -2,13 +2,12 @@
   "version": "v1",
   "hooks": [
     {
-      "name": "Automated AI Code Review",
-      "trigger": "PostFileSave",
-      "description": "Tracks file saves for code review awareness",
-      "matcher": "\\.(ts|tsx|java|sql)$",
+      "name": "AI Code Review (Manual, Diff-Only)",
+      "trigger": "Manual",
+      "description": "Runs one AI review pass over the story's changed files. Triggered manually after implementation is complete and build/lint/tests pass locally. Replaces the previous on-save hook, which started an agent run on every file save.",
       "action": {
         "type": "agent",
-        "prompt": "When a source file is saved, note it for the next code review cycle. Do not run a full review on every save — just track that changes have been made. A full review will be triggered manually or when the user asks for it."
+        "prompt": "Review only the changes introduced by this story. Use git diff against the base branch as the source of truth. Do not review unchanged files or unrelated folders.\n\nPerform ONE review pass. Report actual issues only: functional bugs, incorrect API usage, security issues, broken logic, missing validation, obvious regressions.\n\nApply the fixes directly. Do not refactor unrelated files. Do not rewrite existing correct code. Do not run another review pass unless a fix introduces a new build or test failure; if it does, check only that failure.\n\nSave findings to docs/code-review/{ISSUE-KEY}-ai-review.md."
       }
     }
   ]

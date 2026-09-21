@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.5: Implement Faculty Workload Violation Detection
 
 ## Jira Reference

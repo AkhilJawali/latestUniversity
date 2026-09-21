@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.3: Set Up Redis for Cache, Pub/Sub, and Job Queues
 
 ## Jira Reference

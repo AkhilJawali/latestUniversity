@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.7: Property Tests for Faculty Workload Computation
 
 ## Jira Reference

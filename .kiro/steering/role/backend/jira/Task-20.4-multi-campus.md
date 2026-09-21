@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.4: Wire Multi-Campus Coordination
 
 ## Jira Reference

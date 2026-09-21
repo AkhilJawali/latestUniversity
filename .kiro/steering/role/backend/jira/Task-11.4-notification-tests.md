@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 11.4: Property Test for Notification Delivery
 
 ## Jira Reference

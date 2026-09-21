@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.8: Property Tests for Locked Slots, Holiday, Grid
 
 ## Jira Reference

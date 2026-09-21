@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 12.2: Implement Live Feed Subscription and Refresh
 
 ## Jira Reference

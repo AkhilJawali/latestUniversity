@@ -1,32 +1,66 @@
-/* A4-430 — Room & Lab management feature styles. Reuses global card/table/modal/btn
-   classes; adds the filters bar and the modal form-row layout. */
+/**
+ * A4-430 — Room management page styles.
+ * Follows existing patterns from faculty-management.css.
+ */
+
+.room-management {
+  padding: 1.5rem;
+}
+
+.room-management .page-title {
+  margin-bottom: 0.25rem;
+}
+
+.room-management .page-subtitle {
+  color: var(--color-muted, #6b7280);
+  margin-bottom: 1.5rem;
+}
 
 .room-management .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-end;
-  margin: 16px 0 20px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .room-management .filter-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
+  min-width: 150px;
 }
 
 .room-management .filter-field label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-muted, #64748b);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-/* Two-up field rows inside the room modal. */
-.modal .form-row {
+.room-management .table-actions {
+  margin-bottom: 1rem;
+}
+
+.room-management .pagination {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
 }
 
-.modal .form-row .form-field {
-  flex: 1;
+.room-management .pagination-info {
+  font-size: 0.875rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.room-management .form-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.room-management .form-message--error {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.1: Implement Real-Time Conflict Detection Engine
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.8: Property Test for Time-Slot Grid Non-Overlap
 
 ## Jira Reference

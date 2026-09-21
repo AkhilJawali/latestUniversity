@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: "**/*{test,Test,spec,Spec,IT}*"
 ---
 
 # Testing Standards

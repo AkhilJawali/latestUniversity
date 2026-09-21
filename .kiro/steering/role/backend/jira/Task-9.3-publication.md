@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 9.3: Implement Publication Trigger and Notifications
 
 ## Jira Reference

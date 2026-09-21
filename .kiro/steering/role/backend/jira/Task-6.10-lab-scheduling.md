@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.10: Implement Lab and Practical Session Scheduling
 
 ## Jira Reference

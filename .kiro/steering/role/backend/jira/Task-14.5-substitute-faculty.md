@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.5: Implement Substitute Faculty Proposal
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 9.5: Property Test for Block Approval Gating
 
 ## Jira Reference

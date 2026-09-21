@@ -48,6 +48,7 @@ docs/                  # Project documentation
     git.md             # Git conventions
     mcp.md             # MCP server config
     testing.md         # Testing standards
+    token-efficiency.md # Token/credit usage limits (always loaded)
   role/
     backend/           # Backend coding standards
     frontend/          # Frontend coding standards
@@ -66,6 +67,7 @@ docs/                  # Project documentation
 | `shared/jira.md` | Jira project config, issue types, field mappings, API notes |
 | `shared/git.md` | Branch strategy, commit format, PR rules |
 | `shared/testing.md` | Test pyramid, naming, coverage requirements |
+| `shared/token-efficiency.md` | Token usage rules: no auto agent runs, one review pass, diff-only review, tool-generated coverage, minimal context, small files |
 | `role/backend/` | Backend standards (package structure, layering, coding conventions) |
 | `role/frontend/` | Frontend standards (component structure, state management) |
 | `brd-to-jira.md` | Process for converting BRD → Epic → Stories → Subtasks |

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.3: Implement Under-Enrolment Alert and Drop Handling
 
 ## Jira Reference

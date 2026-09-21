@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 10.1: Implement Accreditation Norm Configuration
 
 ## Jira Reference

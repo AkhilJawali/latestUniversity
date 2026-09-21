@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.11: Property Tests for Lab Scheduling
 
 ## Jira Reference

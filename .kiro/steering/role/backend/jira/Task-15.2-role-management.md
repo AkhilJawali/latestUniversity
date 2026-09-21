@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 15.2: Implement Role and Permission Management
 
 ## Jira Reference

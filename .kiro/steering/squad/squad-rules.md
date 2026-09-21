@@ -29,12 +29,12 @@ Before submitting code for human review, Kiro must perform an automated AI code 
 
 **Process:**
 1. When the Code Review subtask is about to be submitted (before assigning to human reviewer), Kiro triggers an AI code review.
-2. The `semantic_reviewer` analyzes the local diff and produces a behavioral review organized by concern.
+2. The `semantic_reviewer` analyzes only the story's local diff or changed files (never whole feature folders or unchanged files) and produces a behavioral review organized by concern.
 3. Review output is saved to `docs/code-review/{ISSUE-KEY}-ai-review.md`.
 4. **If verdict is NEEDS_CHANGES:**
    - Kiro lists the issues found.
    - Kiro asks the user if they want the issues auto-fixed.
-   - If yes: Kiro fixes the issues, re-runs the review until verdict is APPROVED or COMMENT.
+   - If yes: Kiro fixes the issues, then runs build and tests. **One review pass only.** Re-review only if a fix introduces a new build or test failure, and then check only that failure.
    - The AI review doc is attached to the Code Review subtask in Jira.
 5. **If verdict is APPROVED or COMMENT:**
    - Code is ready for human review.
@@ -57,6 +57,8 @@ Before submitting code for human review, Kiro must perform an automated AI code 
 **Rules:**
 - AI review does NOT replace human review — it's a pre-check that runs during the Code Review step
 - AI review findings are documented and tracked
+- Report actual issues only (bugs, incorrect API usage, security, broken logic, missing validation, regressions). Suggestions and style nits never trigger another pass.
+- Do not refactor unrelated files or rewrite correct code while fixing findings.
 - Blocking issues must be fixed before human reviewer is assigned
 - The AI review doc is always attached to the Jira Code Review subtask
 

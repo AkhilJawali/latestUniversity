@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.4: Implement Course Catalogue and Personal Timetable APIs
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 15.1: Implement RBAC Middleware and Enforcement
 
 ## Jira Reference

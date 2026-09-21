@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.10: RBAC Schema
 
 ## Jira Reference

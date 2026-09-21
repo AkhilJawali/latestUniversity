@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 10.3: Implement Compliance Report Generation
 
 ## Jira Reference

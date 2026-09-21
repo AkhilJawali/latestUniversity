@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.6: Elective Schema
 
 ## Jira Reference

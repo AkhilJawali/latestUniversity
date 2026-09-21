@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 11.1: Implement Notification Delivery Engine
 
 ## Jira Reference

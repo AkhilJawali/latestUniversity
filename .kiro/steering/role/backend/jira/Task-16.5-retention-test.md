@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 16.5: Property Test for Data Retention
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.4: Implement Coordinator Dashboard Views
 
 ## Jira Reference

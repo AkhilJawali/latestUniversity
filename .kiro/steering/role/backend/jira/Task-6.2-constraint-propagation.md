@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.2: Implement Constraint Propagation (AC-3 Variant)
 
 ## Jira Reference

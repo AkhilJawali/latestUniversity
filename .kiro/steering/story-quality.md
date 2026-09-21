@@ -1,5 +1,7 @@
 ---
-inclusion: always
+inclusion: auto
+name: story-quality
+description: Guardrails for creating, updating, splitting, or reviewing User Stories, Epics, or a BRD-to-Jira breakdown. Use whenever story scope, acceptance criteria, or story descriptions are written or checked.
 ---
 
 # Story Quality Guardrails

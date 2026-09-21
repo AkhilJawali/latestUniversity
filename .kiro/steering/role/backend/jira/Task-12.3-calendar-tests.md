@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 12.3: Property Test for Calendar Feed Consistency
 
 ## Jira Reference

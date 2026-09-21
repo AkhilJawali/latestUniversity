@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.7: Implement Reporting Dashboards Frontend
 
 ## Jira Reference

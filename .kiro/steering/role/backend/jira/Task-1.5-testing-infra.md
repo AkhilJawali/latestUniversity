@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.5: Set Up Testing Infrastructure
 
 ## Jira Reference

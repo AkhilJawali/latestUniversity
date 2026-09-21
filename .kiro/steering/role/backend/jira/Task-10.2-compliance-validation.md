@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 10.2: Implement Draft Compliance Validation
 
 ## Jira Reference

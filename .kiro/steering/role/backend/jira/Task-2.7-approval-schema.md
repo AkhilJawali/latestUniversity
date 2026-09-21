@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 2.7: Approval Schema
 
 ## Jira Reference

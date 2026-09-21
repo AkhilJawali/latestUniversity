@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: "**/.kiro/settings/mcp.json"
 ---
 
 # MCP (Model Context Protocol) Standards

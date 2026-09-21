@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.1: Implement Campus Hierarchy CRUD Service
 
 ## Jira Reference

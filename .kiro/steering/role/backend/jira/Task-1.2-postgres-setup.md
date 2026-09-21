@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.2: Set Up PostgreSQL Database with Migrations Framework
 
 ## Jira Reference

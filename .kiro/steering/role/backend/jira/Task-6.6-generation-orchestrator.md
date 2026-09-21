@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.6: Implement Generation Orchestrator and API
 
 ## Jira Reference

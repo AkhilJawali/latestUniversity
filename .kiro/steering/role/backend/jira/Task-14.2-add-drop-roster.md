@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.2: Implement Add/Drop Roster Management
 
 ## Jira Reference

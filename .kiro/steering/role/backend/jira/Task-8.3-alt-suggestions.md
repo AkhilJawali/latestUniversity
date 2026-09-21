@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 8.3: Implement Alternative Slot Suggestion Engine
 
 ## Jira Reference

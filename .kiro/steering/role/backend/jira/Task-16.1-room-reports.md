@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 16.1: Implement Room and Lab Utilisation Reports
 
 ## Jira Reference

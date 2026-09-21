@@ -1,5 +1,7 @@
 ---
-inclusion: always
+inclusion: auto
+name: requirement-quality
+description: Guardrails for creating, updating, or reviewing Requirement Documents (docs/requirements). Use whenever a requirement document is generated, edited, or verified.
 ---
 
 # Requirement Document Quality Guardrails

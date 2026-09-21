@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.3: Implement Course Management Service
 
 ## Jira Reference

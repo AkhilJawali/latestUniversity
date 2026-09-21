@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.2: Implement Drag-and-Drop Timetable Editor
 
 ## Jira Reference

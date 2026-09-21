@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 9.4: Property Tests for Approval Workflow
 
 ## Jira Reference

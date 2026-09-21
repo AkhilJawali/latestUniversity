@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.1: Implement Constraint Model and Data Structures
 
 ## Jira Reference

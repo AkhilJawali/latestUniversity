@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 16.2: Implement Faculty Workload Reports
 
 ## Jira Reference

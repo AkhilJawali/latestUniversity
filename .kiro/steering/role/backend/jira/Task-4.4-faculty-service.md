@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.4: Implement Faculty Management Service
 
 ## Jira Reference

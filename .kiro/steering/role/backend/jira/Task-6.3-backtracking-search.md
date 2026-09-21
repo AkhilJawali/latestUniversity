@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.3: Implement Backtracking Search with MRV and LCV
 
 ## Jira Reference

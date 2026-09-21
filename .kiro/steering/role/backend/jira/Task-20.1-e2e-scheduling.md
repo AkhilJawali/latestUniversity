@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.1: Wire End-to-End Scheduling Workflow
 
 ## Jira Reference

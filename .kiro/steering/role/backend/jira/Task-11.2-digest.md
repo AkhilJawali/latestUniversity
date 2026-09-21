@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 11.2: Implement Digest Aggregation
 
 ## Jira Reference

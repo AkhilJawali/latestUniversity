@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.6: Implement Faculty and Admin Views
 
 ## Jira Reference

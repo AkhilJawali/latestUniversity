@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 20.2: Wire Resource Block Activation Flow
 
 ## Jira Reference

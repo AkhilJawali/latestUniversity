@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.9: Property Tests for Generation Output
 
 ## Jira Reference

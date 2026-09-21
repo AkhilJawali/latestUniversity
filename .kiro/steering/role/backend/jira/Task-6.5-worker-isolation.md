@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.5: Implement Worker Thread Isolation and Timeout
 
 ## Jira Reference

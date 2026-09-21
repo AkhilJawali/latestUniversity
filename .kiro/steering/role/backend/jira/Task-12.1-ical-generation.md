@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 12.1: Implement iCal Feed Generation
 
 ## Jira Reference

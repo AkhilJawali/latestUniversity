@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.6: Set Up Authentication and Session Management
 
 ## Jira Reference

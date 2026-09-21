@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.4: Set Up Express API Server with WebSocket Support
 
 ## Jira Reference

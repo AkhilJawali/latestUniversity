@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 1.1: Initialize Spring Boot Project Structure
 
 ## Jira Reference

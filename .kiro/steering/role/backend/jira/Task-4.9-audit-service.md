@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.9: Implement Audit Trail Service
 
 ## Jira Reference

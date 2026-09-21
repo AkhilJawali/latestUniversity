@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.6: Property Tests for Elective Registration
 
 ## Jira Reference

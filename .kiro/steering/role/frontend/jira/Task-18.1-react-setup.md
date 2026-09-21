@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.1: Set Up React Frontend Project
 
 ## Jira Reference

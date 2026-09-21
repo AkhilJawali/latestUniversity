@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 14.1: Implement Elective Registration Service
 
 ## Jira Reference

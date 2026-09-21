@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 9.1: Implement Workflow State Machine
 
 ## Jira Reference

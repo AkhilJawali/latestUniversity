@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 18.5: Implement Student Portal Frontend
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.5: Implement Room and Resource Management Service
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 16.4: Implement Historical Archive and Version Comparison
 
 ## Jira Reference

@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 16.3: Implement Conflict Log and Compliance Dashboards
 
 ## Jira Reference

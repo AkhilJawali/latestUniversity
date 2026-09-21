@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.4: Implement Soft-Constraint Optimization (Local Search)
 
 ## Jira Reference

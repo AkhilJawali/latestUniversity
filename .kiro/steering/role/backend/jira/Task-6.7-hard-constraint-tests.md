@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 6.7: Property Tests for Hard Constraint Inviolability
 
 ## Jira Reference

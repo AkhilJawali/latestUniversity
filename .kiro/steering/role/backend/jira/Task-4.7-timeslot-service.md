@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.7: Implement Time-Slot Grid Service
 
 ## Jira Reference

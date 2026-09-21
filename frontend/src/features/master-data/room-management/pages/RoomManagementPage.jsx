@@ -1,22 +1,22 @@
+/**
+ * A4-430 §5.4 — Room management page.
+ * Server-side filters (campus, type, building, minCapacity, equipmentTag) + pagination.
+ */
 import { useMemo, useState } from 'react';
 
 import { useCampuses } from '@/features/master-data/campus-hierarchy/api/useCampuses';
 import ConfigTable from '@/features/scheduling-config/components/ConfigTable';
 import ConfirmDeleteDialog from '@/features/scheduling-config/components/ConfirmDeleteDialog';
 import { mapApiError } from '@/lib/api-error';
-import { useCreateRoom, useDeleteRoom, useRooms, useUpdateRoom } from '../api/useRooms';
+import { useRooms, useCreateRoom, useUpdateRoom, useDeleteRoom } from '../api/useRooms';
 import RoomFormModal from '../components/RoomFormModal';
-import { ROOM_TYPES } from '../constants/room-options';
+import { ROOM_TYPES, ROOM_TYPE_LABELS } from '../constants/room-options';
 import '../room-management.css';
 
-// A4-430 §5.4 — Room management page. Server-side filters (campus, type, building,
-// minCapacity, single equipment tag) drive the paged /rooms query (PD-3), with real
-// pagination controls from meta (PD-6). Create/edit via the custom RoomFormModal,
-// soft-delete via the reused confirm dialog.
 const PAGE_SIZE = 20;
 
 export default function RoomManagementPage() {
-  // Filters.
+  // Filters
   const [campusId, setCampusId] = useState('');
   const [roomType, setRoomType] = useState('');
   const [building, setBuilding] = useState('');
@@ -24,54 +24,70 @@ export default function RoomManagementPage() {
   const [equipmentTag, setEquipmentTag] = useState('');
   const [page, setPage] = useState(0);
 
+  // Query params
   const params = useMemo(() => {
     const p = { page, size: PAGE_SIZE };
-    if (campusId) p.campusId = Number(campusId);
+    if (campusId) p.campusId = campusId;
     if (roomType) p.roomType = roomType;
-    if (building.trim()) p.building = building.trim();
+    if (building) p.building = building;
     if (minCapacity) p.minCapacity = Number(minCapacity);
-    if (equipmentTag.trim()) p.equipmentTag = equipmentTag.trim();
+    if (equipmentTag) p.equipmentTag = equipmentTag;
     return p;
   }, [campusId, roomType, building, minCapacity, equipmentTag, page]);
 
-  const rooms = useRooms(params);
+  const roomsQuery = useRooms(params);
   const createMut = useCreateRoom();
   const updateMut = useUpdateRoom();
   const deleteMut = useDeleteRoom();
 
-  const campuses = useCampuses();
-  const campusRows = campuses.data?.data ?? [];
+  // Reference data
+  const campusesQuery = useCampuses();
+  const campusRows = campusesQuery.data?.data ?? [];
 
-  const rows = rooms.data?.data ?? [];
-  const meta = rooms.data?.meta ?? { page: 0, totalPages: 0, totalElements: 0 };
-
-  // Modal / dialog state.
+  // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [toDelete, setToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
+
+  const rows = roomsQuery.data?.data ?? [];
+  const meta = roomsQuery.data?.meta;
+
+  // Derive building options from current rows
+  const buildingOptions = useMemo(() => {
+    const set = new Set();
+    rows.forEach((r) => r.building && set.add(r.building));
+    return Array.from(set).sort();
+  }, [rows]);
 
   const columns = [
     { key: 'name', header: 'Name' },
     { key: 'code', header: 'Code' },
     { key: 'campusName', header: 'Campus' },
     { key: 'capacity', header: 'Capacity' },
-    { key: 'roomType', header: 'Type' },
+    {
+      key: 'roomType',
+      header: 'Type',
+      filterable: true,
+      render: (r) => ROOM_TYPE_LABELS[r.roomType] ?? r.roomType,
+    },
     {
       key: 'equipmentTags',
       header: 'Equipment',
       render: (r) => (r.equipmentTags?.length ? r.equipmentTags.join(', ') : '—'),
     },
-    { key: 'building', header: 'Building', render: (r) => r.building || '—' },
-    { key: 'floor', header: 'Floor', render: (r) => r.floor || '—' },
+    { key: 'building', header: 'Building', render: (r) => r.building ?? '—' },
+    { key: 'floor', header: 'Floor', render: (r) => r.floor ?? '—' },
   ];
 
   const isEditing = Boolean(editing);
   const initialValues = useMemo(() => {
     if (editing) {
       return {
-        code: editing.code ?? '',
         name: editing.name ?? '',
+        code: editing.code ?? '',
+        campusId: editing.campusId ?? '',
+        campusName: editing.campusName ?? '',
         capacity: editing.capacity ?? '',
         roomType: editing.roomType ?? '',
         equipmentTags: editing.equipmentTags ?? [],
@@ -124,26 +140,23 @@ export default function RoomManagementPage() {
     setDeleteError(null);
   };
 
-  // Reset to page 0 whenever a filter changes.
-  const onFilterChange = (setter) => (value) => {
-    setter(value);
-    setPage(0);
-  };
+  const isPending = createMut.isPending || updateMut.isPending;
 
   return (
     <section className="room-management">
       <h1 className="page-title">Room &amp; Lab Management</h1>
-      <p className="page-subtitle">
-        Manage rooms and labs — capacity, type, equipment tags, and campus/building/floor.
-      </p>
+      <p className="page-subtitle">Manage rooms, labs, and their equipment tags.</p>
 
       <div className="filters-bar">
         <div className="filter-field">
-          <label htmlFor="rf-campus">Campus</label>
+          <label htmlFor="filter-campus">Campus</label>
           <select
-            id="rf-campus"
+            id="filter-campus"
             value={campusId}
-            onChange={(e) => onFilterChange(setCampusId)(e.target.value)}
+            onChange={(e) => {
+              setCampusId(e.target.value);
+              setPage(0);
+            }}
           >
             <option value="">All campuses</option>
             {campusRows.map((c) => (
@@ -155,82 +168,100 @@ export default function RoomManagementPage() {
         </div>
 
         <div className="filter-field">
-          <label htmlFor="rf-type">Type</label>
+          <label htmlFor="filter-type">Room Type</label>
           <select
-            id="rf-type"
+            id="filter-type"
             value={roomType}
-            onChange={(e) => onFilterChange(setRoomType)(e.target.value)}
+            onChange={(e) => {
+              setRoomType(e.target.value);
+              setPage(0);
+            }}
           >
             <option value="">All types</option>
             {ROOM_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+              <option key={t.value} value={t.value}>
+                {t.label}
               </option>
             ))}
           </select>
         </div>
 
         <div className="filter-field">
-          <label htmlFor="rf-building">Building</label>
-          <input
-            id="rf-building"
+          <label htmlFor="filter-building">Building</label>
+          <select
+            id="filter-building"
             value={building}
-            onChange={(e) => onFilterChange(setBuilding)(e.target.value)}
-            placeholder="Exact building"
-          />
+            onChange={(e) => {
+              setBuilding(e.target.value);
+              setPage(0);
+            }}
+          >
+            <option value="">All buildings</option>
+            {buildingOptions.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="filter-field">
-          <label htmlFor="rf-mincap">Min capacity</label>
+          <label htmlFor="filter-capacity">Min Capacity</label>
           <input
-            id="rf-mincap"
+            id="filter-capacity"
             type="number"
             min="1"
             value={minCapacity}
-            onChange={(e) => onFilterChange(setMinCapacity)(e.target.value)}
+            onChange={(e) => {
+              setMinCapacity(e.target.value);
+              setPage(0);
+            }}
+            placeholder="e.g., 30"
           />
         </div>
 
         <div className="filter-field">
-          <label htmlFor="rf-tag">Equipment tag</label>
+          <label htmlFor="filter-tag">Equipment Tag</label>
           <input
-            id="rf-tag"
+            id="filter-tag"
+            type="text"
             value={equipmentTag}
-            onChange={(e) => onFilterChange(setEquipmentTag)(e.target.value)}
-            placeholder="e.g. computer_lab"
+            onChange={(e) => {
+              setEquipmentTag(e.target.value);
+              setPage(0);
+            }}
+            placeholder="e.g., computer_lab"
           />
         </div>
       </div>
 
+      <div className="table-actions">
+        <button type="button" className="btn btn--primary" onClick={openCreate}>
+          Add Room
+        </button>
+      </div>
+
       <ConfigTable
-        entityLabel="Rooms"
-        addLabel="Add room"
         columns={columns}
         rows={rows}
-        isLoading={rooms.isLoading}
-        isError={rooms.isError}
-        onRetry={rooms.refetch}
-        onAdd={openCreate}
+        isLoading={roomsQuery.isLoading}
+        error={roomsQuery.error?.message}
         onEdit={openEdit}
-        onDelete={(row) => {
-          setDeleteError(null);
-          setToDelete(row);
-        }}
-        searchable={false}
+        onDelete={(row) => setToDelete(row)}
       />
 
-      {meta.totalPages > 1 && (
+      {meta && meta.totalPages > 1 && (
         <div className="pagination">
           <button
             type="button"
             className="btn"
-            disabled={page <= 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
           >
             Previous
           </button>
-          <span className="page-info">
-            Page {meta.page + 1} of {meta.totalPages} ({meta.totalElements} rooms)
+          <span className="pagination-info">
+            Page {page + 1} of {meta.totalPages} ({meta.totalElements} rooms)
           </span>
           <button
             type="button"
@@ -247,26 +278,24 @@ export default function RoomManagementPage() {
         open={modalOpen}
         mode={isEditing ? 'edit' : 'create'}
         initialValues={initialValues}
-        currentCampusName={editing?.campusName ?? ''}
         campuses={campusRows}
-        isPending={createMut.isPending || updateMut.isPending}
+        isPending={isPending}
         onSubmit={submitForm}
         onClose={closeModal}
       />
 
       <ConfirmDeleteDialog
         open={Boolean(toDelete)}
-        label={
-          deleteError
-            ? `room ${toDelete?.code}. ${deleteError}`
-            : toDelete
-              ? `room ${toDelete.code} — ${toDelete.name}`
-              : 'this room'
-        }
+        label={toDelete?.name ?? 'this room'}
         isPending={deleteMut.isPending}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
+      {deleteError && (
+        <p className="form-message form-message--error" role="alert">
+          {deleteError}
+        </p>
+      )}
     </section>
   );
 }

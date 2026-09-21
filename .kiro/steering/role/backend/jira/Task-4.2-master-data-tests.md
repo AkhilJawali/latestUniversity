@@ -1,3 +1,7 @@
+---
+inclusion: manual
+---
+
 # Task 4.2: Property Tests for Master Data Round-Trip Integrity
 
 ## Jira Reference
