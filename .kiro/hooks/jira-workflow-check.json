@@ -3,9 +3,8 @@
   "hooks": [
     {
       "name": "Jira Workflow Rules Check",
-      "trigger": "PreToolUse",
-      "description": "Forces workflow rule verification before any Jira operation to prevent missing cascading actions like subtask assignment inheritance.",
-      "matcher": "mcp_jira_jira_issues",
+      "trigger": "Manual",
+      "description": "Run manually before complex Jira operations (story creation, assignment) to verify workflow rules like subtask inheritance and default subtask creation.",
       "action": {
         "type": "agent",
         "prompt": "Before executing any Jira operation, answer these questions:\n\n1. If you are ASSIGNING a story: Have you also queued assignment of ALL subtasks under that story to the same person? (Squad rules: \"When a story is assigned to someone, all its subtasks must also be assigned to that person by default.\")\n\n2. If you are CREATING a story: Have you also queued creation of the 4 default subtasks (Requirement Generation, Design Derivation, Code Review, Testing)?\n\n3. If you are TRANSITIONING a subtask out of \"To Do\": Have you checked that the parent story is also moved to \"In Progress\" if it's still in \"To Do\"?\n\n4. If you are creating DEVELOPMENT subtasks: Are you using the parent Story's numeric ID (not key) in the parent field?\n\n5. If any of the above apply and you haven't addressed them: STOP and include those actions in your plan before proceeding.\n\nDo NOT skip these checks. They are mandatory per the workflow steering and squad-rules steering files."

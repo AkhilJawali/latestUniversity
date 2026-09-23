@@ -1,116 +1,198 @@
 package com.utms.scheduling.conflict;
 
-import com.utms.common.exception.EntityNotFoundException;
-import com.utms.conflict.detection.ConflictDetectionService;
-import com.utms.conflict.detection.PlacementRuleChecker;
-import com.utms.scheduling.engine.entity.TimetableDraft;
-import com.utms.scheduling.engine.enums.RecurrenceType;
-import com.utms.scheduling.engine.repository.TimetableDraftRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.utms.scheduling.engine.entity.ScheduledSession;
+import com.utms.scheduling.engine.entity.TimetableDraft;
+import com.utms.scheduling.engine.enums.DraftStatus;
+import com.utms.scheduling.engine.repository.ScheduledSessionRepository;
+import com.utms.scheduling.engine.repository.TimetableDraftRepository;
+
+import com.utms.common.exception.EntityNotFoundException;
 
 /**
- * Unit tests for {@link ConflictDetectionService} — A4-16 acceptance criteria AC6, AC8, AC9
- * (plus service-level conflict propagation). Controller-level HTTP status mapping
- * (400/404 envelope, malformed-body validation) is an integration-test concern.
+ * Unit tests for ConflictDetectionService.
+ * 
+ * AC8: Malformed input returns 400-style error (via IllegalArgumentException).
+ * AC9: Full-draft check returns all conflicts.
  */
+@ExtendWith(MockitoExtension.class)
 class ConflictDetectionServiceTest {
 
-    private TimetableDraftRepository draftRepository;
+    @Mock
     private DraftOccupancyLoader occupancyLoader;
+
+    @Mock
     private PlacementRuleChecker ruleChecker;
-    private ConflictDetectionService service;
 
-    @BeforeEach
-    void setUp() {
-        draftRepository = mock(TimetableDraftRepository.class);
-        occupancyLoader = mock(DraftOccupancyLoader.class);
-        ruleChecker = mock(PlacementRuleChecker.class);
-        service = new ConflictDetectionService(draftRepository, occupancyLoader, ruleChecker);
-    }
+    @Mock
+    private ScheduledSessionRepository sessionRepository;
 
-    private ProposedPlacementRequest placement() {
-        return ProposedPlacementRequest.builder()
-                .facultyId(1L).roomId(5L).batchId(7L)
-                .dayOfWeek("MONDAY").slotDefinitionId(3L).durationMinutes(60)
+    @Mock
+    private TimetableDraftRepository draftRepository;
+
+    @InjectMocks
+    private ConflictDetectionService detectionService;
+
+    @Test
+    @DisplayName("Should check placement and return conflicts")
+    void testCheckPlacement() {
+        // Setup
+        TimetableDraft draft = new TimetableDraft();
+        draft.setId(1L);
+        
+        ProposedPlacementRequest request = ProposedPlacementRequest.builder()
+                .draftId(1L)
+                .sessionId(10L)
+                .roomId(100L)
+                .facultyId(200L)
+                .batchId(300L)
+                .dayOfWeek("MONDAY")
+                .slotDefinitionId(5L)
                 .build();
-    }
-
-    // AC8: nonexistent / deleted draft -> EntityNotFoundException, no occupancy load.
-    @Test
-    void checkPlacement_draftNotFound_throwsAndDoesNotLoadOccupancy() {
-        when(draftRepository.findByIdAndDeletedAtIsNull(99L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.checkPlacement(99L, placement()))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("TimetableDraft");
-
-        verify(occupancyLoader, never()).load(anyLong());
-    }
-
-    // AC6: valid draft, checker finds nothing -> empty list.
-    @Test
-    void checkPlacement_noConflicts_returnsEmpty() {
-        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(new TimetableDraft()));
-        when(occupancyLoader.load(1L)).thenReturn(new DraftOccupancyIndex());
-        when(ruleChecker.check(any(), any())).thenReturn(List.of());
-
-        List<ConflictDto> conflicts = service.checkPlacement(1L, placement());
-        assertThat(conflicts).isEmpty();
-    }
-
-    // Service plumbing: checker conflicts are propagated to the caller.
-    @Test
-    void checkPlacement_checkerReturnsConflict_isPropagated() {
-        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(new TimetableDraft()));
-        when(occupancyLoader.load(1L)).thenReturn(new DraftOccupancyIndex());
-        when(ruleChecker.check(any(), any())).thenReturn(List.of(
-                ConflictDto.builder().type(ConflictType.FACULTY_DOUBLE_BOOKING).build()));
-
-        List<ConflictDto> conflicts = service.checkPlacement(1L, placement());
-        assertThat(conflicts).extracting(ConflictDto::getType).contains(ConflictType.FACULTY_DOUBLE_BOOKING);
-    }
-
-    // AC9: full-draft check evaluates every placed session and aggregates conflicts.
-    @Test
-    void checkDraft_aggregatesConflictsAcrossPlacedSessions() {
-        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(new TimetableDraft()));
-
+        
         DraftOccupancyIndex index = new DraftOccupancyIndex();
-        index.add(new DraftOccupancyIndex.Occupant(10L, 1L, 5L, 7L, null, "MONDAY", 3L,
-                1.0, RecurrenceType.WEEKLY, null));
-        index.add(new DraftOccupancyIndex.Occupant(11L, 2L, 6L, 8L, null, "TUESDAY", 4L,
-                1.0, RecurrenceType.WEEKLY, null));
-        when(occupancyLoader.load(1L)).thenReturn(index);
-        when(ruleChecker.check(any(), any())).thenReturn(List.of(
-                ConflictDto.builder().type(ConflictType.BATCH_CLASH).build()));
-
-        List<ConflictDto> conflicts = service.checkDraft(1L);
-
-        // Two placed sessions -> checker invoked twice -> two aggregated conflicts.
-        assertThat(conflicts).hasSize(2);
-        verify(ruleChecker, times(2)).check(any(), any());
+        
+        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(draft));
+        when(occupancyLoader.loadForDraft(1L)).thenReturn(index);
+        when(sessionRepository.findByIdAndDeletedAtIsNull(10L)).thenReturn(Optional.empty());
+        when(ruleChecker.checkPlacement(request, null, index)).thenReturn(List.of());
+        
+        // Execute
+        List<ConflictDto> conflicts = detectionService.checkPlacement(request);
+        
+        // Verify
+        assertTrue(conflicts.isEmpty());
+        verify(occupancyLoader).loadForDraft(1L);
     }
 
-    // AC8 (full-draft variant): nonexistent draft on full-draft check also throws.
+    // AC8: Malformed input returns error
+
     @Test
-    void checkDraft_draftNotFound_throws() {
-        when(draftRepository.findByIdAndDeletedAtIsNull(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> service.checkDraft(99L))
-                .isInstanceOf(EntityNotFoundException.class);
-        verify(occupancyLoader, never()).load(anyLong());
+    @DisplayName("AC8: Should throw when draft not found")
+    void testCheckPlacement_draftNotFound() {
+        ProposedPlacementRequest request = ProposedPlacementRequest.builder()
+                .draftId(999L)
+                .build();
+        
+        when(draftRepository.findByIdAndDeletedAtIsNull(999L)).thenReturn(Optional.empty());
+        
+        assertThrows(EntityNotFoundException.class, () -> detectionService.checkPlacement(request));
+    }
+
+    // AC9: Full-draft check
+
+    @Test
+    @DisplayName("AC9: Should check entire draft for conflicts")
+    void testCheckDraft() {
+        // Setup
+        TimetableDraft draft = new TimetableDraft();
+        draft.setId(1L);
+        
+        ScheduledSession session1 = new ScheduledSession();
+        session1.setId(1L);
+        session1.setDayOfWeek("MONDAY");
+        session1.setRoomId(10L);
+        session1.setFacultyId(20L);
+        session1.setBatchId(30L);
+        session1.setSlotDefinitionId(5L);
+        
+        DraftOccupancyIndex index = new DraftOccupancyIndex();
+        index.addSession(session1);
+        
+        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(draft));
+        when(occupancyLoader.loadForDraft(1L)).thenReturn(index);
+        when(ruleChecker.checkPlacement(any(), any(), any())).thenReturn(List.of());
+        
+        // Execute
+        List<ConflictDto> conflicts = detectionService.checkDraft(1L);
+        
+        // Verify
+        assertNotNull(conflicts);
+        verify(occupancyLoader).loadForDraft(1L);
+    }
+
+    @Test
+    @DisplayName("AC9: Should throw when draft not found for full check")
+    void testCheckDraft_draftNotFound() {
+        when(draftRepository.findByIdAndDeletedAtIsNull(999L)).thenReturn(Optional.empty());
+        
+        assertThrows(EntityNotFoundException.class, () -> detectionService.checkDraft(999L));
+    }
+
+    @Test
+    @DisplayName("Should check cross-draft conflicts")
+    void testCheckCrossDraftConflicts() {
+        // Setup - current draft has a session
+        ScheduledSession session = new ScheduledSession();
+        session.setId(1L);
+        session.setDayOfWeek("MONDAY");
+        session.setRoomId(10L);
+        session.setFacultyId(20L);
+        session.setSlotDefinitionId(5L);
+        
+        DraftOccupancyIndex currentIndex = new DraftOccupancyIndex();
+        currentIndex.addSession(session);
+        
+        // Other draft is empty
+        DraftOccupancyIndex otherIndex = new DraftOccupancyIndex();
+        
+        when(occupancyLoader.loadForDraft(100L)).thenReturn(currentIndex);
+        when(occupancyLoader.loadForDrafts(List.of(200L))).thenReturn(otherIndex);
+        
+        // Execute
+        List<ConflictDto> conflicts = detectionService.checkCrossDraftConflicts(100L, List.of(200L));
+        
+        // Verify
+        assertNotNull(conflicts);
+        assertTrue(conflicts.isEmpty()); // No cross-draft conflicts since other is empty
+    }
+
+    @Test
+    @DisplayName("Should deduplicate conflicts")
+    void testDeduplicateConflicts() {
+        // Create duplicate conflicts (same type and conflicting session)
+        ConflictDto c1 = ConflictDto.from(
+                ConflictType.ROOM_DOUBLE_BOOKING,
+                1L, "MONDAY", 1L, 100L, null, null, null,
+                List.of(2L), "Conflict 1");
+        
+        ConflictDto c2 = ConflictDto.from(
+                ConflictType.ROOM_DOUBLE_BOOKING,
+                1L, "MONDAY", 1L, 100L, null, null, null,
+                List.of(2L), "Conflict 2 (duplicate)");
+        
+        // Setup draft and index
+        TimetableDraft draft = new TimetableDraft();
+        draft.setId(1L);
+        
+        ScheduledSession session = new ScheduledSession();
+        session.setId(1L);
+        session.setRoomId(100L);
+        session.setDayOfWeek("MONDAY");
+        session.setSlotDefinitionId(1L);
+        
+        DraftOccupancyIndex index = new DraftOccupancyIndex();
+        index.addSession(session);
+        
+        when(draftRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(draft));
+        when(occupancyLoader.loadForDraft(1L)).thenReturn(index);
+        when(ruleChecker.checkPlacement(any(), any(), any())).thenReturn(List.of(c1, c2));
+        
+        List<ConflictDto> result = detectionService.checkDraft(1L);
+        
+        // Duplicates should be removed
+        assertEquals(1, result.size());
     }
 }

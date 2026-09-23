@@ -110,7 +110,17 @@ export default function AssetFormModal({
       aria-label={isEditing ? 'Edit asset' : 'Add asset'}
     >
       <form onSubmit={submit} noValidate>
-        <h2 className="modal-title">{isEditing ? 'Edit asset' : 'Add asset'}</h2>
+        <div className="modal-header">
+          <h2 className="modal-title">{isEditing ? 'Edit asset' : 'Add asset'}</h2>
+          <button
+            type="button"
+            className="modal-close"
+            aria-label="Close"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
 
         <div className="form-field">
           <label htmlFor="asset-name">
@@ -272,9 +282,17 @@ export default function AssetFormModal({
                 Remove
               </button>
               {(winErr(i, 'dayOfWeek') || winErr(i, 'startTime') || winErr(i, 'endTime')) && (
-                <p className="field-error window-error">
-                  {winErr(i, 'dayOfWeek') || winErr(i, 'startTime') || winErr(i, 'endTime')}
-                </p>
+                <div className="window-errors">
+                  {winErr(i, 'dayOfWeek') && (
+                    <p className="field-error">{winErr(i, 'dayOfWeek')}</p>
+                  )}
+                  {winErr(i, 'startTime') && (
+                    <p className="field-error">{winErr(i, 'startTime')}</p>
+                  )}
+                  {winErr(i, 'endTime') && (
+                    <p className="field-error">{winErr(i, 'endTime')}</p>
+                  )}
+                </div>
               )}
             </div>
           ))}

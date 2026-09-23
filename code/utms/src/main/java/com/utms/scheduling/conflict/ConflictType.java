@@ -1,55 +1,65 @@
 package com.utms.scheduling.conflict;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
- * The canonical catalogue of real-time conflict types (A4-16, design KD-63).
- *
- * <p>This enum is OWNED by the real-time conflict detection engine and consumed by
- * the drag-and-drop editor (A4-15). It is the machine-readable contract for the
- * conflicts surfaced during interactive editing.
- *
- * <p>Detection status per the approved design:
- * <ul>
- *   <li>Actively detected: FACULTY_DOUBLE_BOOKING, ROOM_DOUBLE_BOOKING, BATCH_CLASH,
- *       ROOM_CAPACITY, FACULTY_DAILY_HOURS, FACULTY_WEEKLY_HOURS, FACULTY_CONSECUTIVE_HOURS.</li>
- *   <li>ROOM_HARD_BLOCK — value defined; detection DEFERRED (engine stub not invoked).</li>
- *   <li>FACULTY_HARD_BLOCK — value defined; detection DEFERRED (PD-99, faculty hard-availability stub).</li>
- *   <li>TRAVEL_TIME — value defined; detection DEFERRED (PD-98, no travel-time/distance model).</li>
- *   <li>PREREQUISITE_SEQUENCE — value defined; detection DEFERRED (PD-96, pending stakeholder confirmation).</li>
- * </ul>
- * The deferred values exist so consumers have a stable contract for when detection lands.
+ * Conflict types for real-time conflict detection (A4-16).
+ * 
+ * Types marked INTERNAL arise from constraints within the draft itself
+ * (e.g., faculty double-booking). Types marked CROSS_DRAFT arise from
+ * clashes with other drafts (e.g., cross-draft room double-booking).
+ * 
+ * KD-64: All conflict types are recurrence-aware.
  */
+@Getter
+@RequiredArgsConstructor
 public enum ConflictType {
 
-    /** HC-ENG-1: Faculty is double-booked in the same time slot. */
-    FACULTY_DOUBLE_BOOKING,
+    // Internal constraints (within draft)
+    FACULTY_DOUBLE_BOOKING("Faculty double-booking", ConflictScope.INTERNAL),
+    ROOM_DOUBLE_BOOKING("Room double-booking", ConflictScope.INTERNAL),
+    BATCH_CLASH("Batch clash", ConflictScope.INTERNAL),
 
-    /** HC-ENG-2: Room is double-booked in the same time slot. */
-    ROOM_DOUBLE_BOOKING,
+    // Capacity constraints
+    ROOM_CAPACITY_EXCEEDED("Room capacity exceeded", ConflictScope.INTERNAL),
 
-    /** HC-ENG-3: Batch/section has overlapping sessions. */
-    BATCH_CLASH,
+    // Faculty workload constraints
+    FACULTY_DAILY_HOURS_EXCEEDED("Faculty daily hours exceeded", ConflictScope.INTERNAL),
+    FACULTY_WEEKLY_HOURS_EXCEEDED("Faculty weekly hours exceeded", ConflictScope.INTERNAL),
+    FACULTY_CONSECUTIVE_HOURS_EXCEEDED("Faculty consecutive hours exceeded", ConflictScope.INTERNAL),
 
-    /** HC-ENG-4: Room capacity is less than batch strength. */
-    ROOM_CAPACITY,
+    // Hard block constraints
+    ROOM_HARD_BLOCK("Room hard block", ConflictScope.INTERNAL),
+    FACULTY_HARD_BLOCK("Faculty hard block", ConflictScope.INTERNAL),
 
-    /** HC-ENG-11: Faculty daily teaching hours exceed maximum. */
-    FACULTY_DAILY_HOURS,
+    // Travel time constraint (KD-63: DEFINED but not detected yet - PD-98)
+    TRAVEL_TIME_VIOLATION("Travel time violation", ConflictScope.INTERNAL),
 
-    /** HC-ENG-11: Faculty weekly teaching hours exceed maximum. */
-    FACULTY_WEEKLY_HOURS,
+    // Prerequisite sequence (KD-63: DEFINED but not detected yet - PD-96)
+    PREREQUISITE_SEQUENCE_VIOLATION("Prerequisite sequence violation", ConflictScope.INTERNAL),
 
-    /** HC-ENG-12: Faculty consecutive teaching hours exceed maximum. */
-    FACULTY_CONSECUTIVE_HOURS,
+    // Cross-draft conflicts
+    CROSS_DRAFT_FACULTY_DOUBLE_BOOKING("Cross-draft faculty double-booking", ConflictScope.CROSS_DRAFT),
+    CROSS_DRAFT_ROOM_DOUBLE_BOOKING("Cross-draft room double-booking", ConflictScope.CROSS_DRAFT);
 
-    /** Room has a hard block during this time (DEFERRED detection). */
-    ROOM_HARD_BLOCK,
+    private final String label;
+    private final ConflictScope scope;
 
-    /** Faculty has declared hard unavailability (DEFERRED detection, PD-99). */
-    FACULTY_HARD_BLOCK,
+    public boolean isInternal() {
+        return scope == ConflictScope.INTERNAL;
+    }
 
-    /** Travel-time buffer violated between campuses (DEFERRED detection, PD-98). */
-    TRAVEL_TIME,
+    public boolean isCrossDraft() {
+        return scope == ConflictScope.CROSS_DRAFT;
+    }
 
-    /** Prerequisite course sequencing violated (DEFERRED detection, PD-96). */
-    PREREQUISITE_SEQUENCE
+    @Getter
+    @RequiredArgsConstructor
+    public enum ConflictScope {
+        INTERNAL("Internal"),
+        CROSS_DRAFT("Cross-draft");
+
+        private final String label;
+    }
 }

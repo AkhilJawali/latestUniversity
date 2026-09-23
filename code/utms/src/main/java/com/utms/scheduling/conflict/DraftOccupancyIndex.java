@@ -1,132 +1,223 @@
 package com.utms.scheduling.conflict;
 
-import com.utms.scheduling.engine.enums.RecurrenceType;
-import com.utms.scheduling.engine.enums.WeekGroup;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.utms.scheduling.engine.entity.ScheduledSession;
+import com.utms.scheduling.engine.enums.RecurrenceType;
+import com.utms.scheduling.engine.enums.WeekGroup;
+
+import lombok.Getter;
+
 /**
- * Draft-scoped occupancy index for real-time conflict detection (A4-16, KD-61).
- *
- * <p>Built once per draft from persisted {@code ScheduledSession} rows and used for
- * O(1)-per-slot occupancy lookups, independent of the generation engine's
- * {@code CSPState} (which is coupled to a generation run). Occupancy is keyed by
- * {@code (dayOfWeek, slotDefinitionId)} and stores the placed sessions occupying that
- * slot so the rule checker can apply recurrence-aware and capacity-aware logic.
- *
- * <p>Design note (KD-61): The design described BitSet occupancy maps; this implementation
- * keys occupancy by (dayOfWeek, slotDefinitionId) to a list of {@link Occupant} records
- * instead. Persisted sessions carry {@code slotDefinitionId} (not a contiguous slot
- * index), and the rule checker needs per-occupant data (recurrence, section, duration)
- * that a bare BitSet cannot carry. Lookups remain O(1) per slot. This is a mechanism-level
- * refinement of KD-61, not a scope change.
+ * In-memory index of draft occupancy for O(1) conflict lookups.
+ * 
+ * Provides fast lookups by room+day+slot, faculty+day+slot, and batch+day+slot.
+ * Used by ConflictDetectionService for real-time conflict detection.
+ * 
+ * KD-61: Draft-scoped occupancy index (BitSet maps for faculty/room/batch,
+ * keyed by day×slot), built from persisted ScheduledSession rows.
+ * 
+ * Design: A4-16 §5.3 DraftOccupancyLoader
  */
 public class DraftOccupancyIndex {
 
+    /** roomDaySlot -> sessions */
+    @Getter
+    private final Map<String, List<ScheduledSession>> roomIndex = new HashMap<>();
+
+    /** facultyDaySlot -> sessions */
+    @Getter
+    private final Map<String, List<ScheduledSession>> facultyIndex = new HashMap<>();
+
+    /** batchDaySlot -> sessions */
+    @Getter
+    private final Map<String, List<ScheduledSession>> batchIndex = new HashMap<>();
+
+    /** All sessions in the draft */
+    @Getter
+    private final List<ScheduledSession> allSessions = new ArrayList<>();
+
+    private static final String KEY_DELIMITER = ":";
+
     /**
-     * A single placed session occupying a (day, slot). Immutable.
-     *
-     * @param sessionId        the scheduled session ID
-     * @param facultyId        the faculty teaching this session
-     * @param roomId           the room where this session is held
-     * @param batchId          the batch attending this session
-     * @param sectionId        the section (if any) for split batches
-     * @param dayOfWeek        the day of week (e.g., "MONDAY")
-     * @param slotDefinitionId the slot definition ID
-     * @param durationHours    the duration in hours (for workload calculations)
-     * @param recurrenceType   WEEKLY or FORTNIGHTLY
-     * @param weekGroup        for FORTNIGHTLY: WEEK_A or WEEK_B
+     * Builds the key for room index lookup.
      */
-    public record Occupant(
-            Long sessionId,
-            Long facultyId,
-            Long roomId,
-            Long batchId,
-            Long sectionId,
-            String dayOfWeek,
-            Long slotDefinitionId,
-            double durationHours,
-            RecurrenceType recurrenceType,
-            WeekGroup weekGroup) {
-    }
-
-    private final Map<String, List<Occupant>> bySlot = new HashMap<>();
-    private final List<Occupant> allOccupants = new ArrayList<>();
-
-    private static String slotKey(String dayOfWeek, Long slotDefinitionId) {
-        return dayOfWeek + "#" + slotDefinitionId;
+    public static String roomKey(Long roomId, String dayOfWeek, Long slotDefinitionId) {
+        return "R" + KEY_DELIMITER + roomId + KEY_DELIMITER + dayOfWeek + KEY_DELIMITER + slotDefinitionId;
     }
 
     /**
-     * Add a placed session to the index.
-     *
-     * @param occupant the session occupant to add
+     * Builds the key for faculty index lookup.
      */
-    public void add(Occupant occupant) {
-        allOccupants.add(occupant);
-        bySlot.computeIfAbsent(slotKey(occupant.dayOfWeek(), occupant.slotDefinitionId()), k -> new ArrayList<>())
-                .add(occupant);
+    public static String facultyKey(Long facultyId, String dayOfWeek, Long slotDefinitionId) {
+        return "F" + KEY_DELIMITER + facultyId + KEY_DELIMITER + dayOfWeek + KEY_DELIMITER + slotDefinitionId;
     }
 
     /**
-     * Get occupants at a given (day, slot), excluding the session being moved (if any).
-     *
-     * @param dayOfWeek         the day of week
-     * @param slotDefinitionId  the slot definition ID
-     * @param excludeSessionId  the session ID to exclude (for move operations)
-     * @return list of occupants at that slot, never null
+     * Builds the key for batch index lookup.
      */
-    public List<Occupant> occupantsAt(String dayOfWeek, Long slotDefinitionId, Long excludeSessionId) {
-        List<Occupant> raw = bySlot.getOrDefault(slotKey(dayOfWeek, slotDefinitionId), List.of());
-        if (excludeSessionId == null) {
-            return new ArrayList<>(raw);
+    public static String batchKey(Long batchId, String dayOfWeek, Long slotDefinitionId) {
+        return "B" + KEY_DELIMITER + batchId + KEY_DELIMITER + dayOfWeek + KEY_DELIMITER + slotDefinitionId;
+    }
+
+    /**
+     * Clears all indices.
+     */
+    public void clear() {
+        roomIndex.clear();
+        facultyIndex.clear();
+        batchIndex.clear();
+        allSessions.clear();
+    }
+
+    /**
+     * Adds a session to all indices.
+     */
+    public void addSession(ScheduledSession session) {
+        if (session == null || session.getRoomId() == null || session.getDayOfWeek() == null || session.getSlotDefinitionId() == null) {
+            return;
         }
-        List<Occupant> filtered = new ArrayList<>(raw.size());
-        for (Occupant o : raw) {
-            if (!excludeSessionId.equals(o.sessionId())) {
-                filtered.add(o);
+
+        allSessions.add(session);
+
+        // Room index
+        String roomKey = roomKey(session.getRoomId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+        roomIndex.computeIfAbsent(roomKey, k -> new ArrayList<>()).add(session);
+
+        // Faculty index
+        if (session.getFacultyId() != null) {
+            String facultyKey = facultyKey(session.getFacultyId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+            facultyIndex.computeIfAbsent(facultyKey, k -> new ArrayList<>()).add(session);
+        }
+
+        // Batch index
+        if (session.getBatchId() != null) {
+            String batchKey = batchKey(session.getBatchId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+            batchIndex.computeIfAbsent(batchKey, k -> new ArrayList<>()).add(session);
+        }
+    }
+
+    /**
+     * Removes a session from all indices.
+     */
+    public void removeSession(ScheduledSession session) {
+        if (session == null) {
+            return;
+        }
+
+        allSessions.removeIf(s -> s.getId().equals(session.getId()));
+
+        // Room index
+        if (session.getRoomId() != null && session.getDayOfWeek() != null && session.getSlotDefinitionId() != null) {
+            String roomKey = roomKey(session.getRoomId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+            var sessions = roomIndex.get(roomKey);
+            if (sessions != null) {
+                sessions.removeIf(s -> s.getId().equals(session.getId()));
+                if (sessions.isEmpty()) {
+                    roomIndex.remove(roomKey);
+                }
             }
         }
-        return filtered;
+
+        // Faculty index
+        if (session.getFacultyId() != null && session.getDayOfWeek() != null && session.getSlotDefinitionId() != null) {
+            String facultyKey = facultyKey(session.getFacultyId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+            var sessions = facultyIndex.get(facultyKey);
+            if (sessions != null) {
+                sessions.removeIf(s -> s.getId().equals(session.getId()));
+                if (sessions.isEmpty()) {
+                    facultyIndex.remove(facultyKey);
+                }
+            }
+        }
+
+        // Batch index
+        if (session.getBatchId() != null && session.getDayOfWeek() != null && session.getSlotDefinitionId() != null) {
+            String batchKey = batchKey(session.getBatchId(), session.getDayOfWeek(), session.getSlotDefinitionId());
+            var sessions = batchIndex.get(batchKey);
+            if (sessions != null) {
+                sessions.removeIf(s -> s.getId().equals(session.getId()));
+                if (sessions.isEmpty()) {
+                    batchIndex.remove(batchKey);
+                }
+            }
+        }
     }
 
     /**
-     * Get all occupants on a given day (used for workload/consecutive checks).
-     *
-     * @param dayOfWeek         the day of week
-     * @param excludeSessionId  the session ID to exclude
-     * @return list of occupants on that day
+     * Gets all sessions in a room at a given day+slot.
      */
-    public List<Occupant> occupantsOnDay(String dayOfWeek, Long excludeSessionId) {
-        List<Occupant> result = new ArrayList<>();
-        for (Occupant o : allOccupants) {
-            if (o.dayOfWeek().equals(dayOfWeek)
-                    && (excludeSessionId == null || !excludeSessionId.equals(o.sessionId()))) {
-                result.add(o);
+    public List<ScheduledSession> getSessionsByRoom(Long roomId, String dayOfWeek, Long slotDefinitionId) {
+        return roomIndex.getOrDefault(roomKey(roomId, dayOfWeek, slotDefinitionId), Collections.emptyList());
+    }
+
+    /**
+     * Gets all sessions for a faculty at a given day+slot.
+     */
+    public List<ScheduledSession> getSessionsByFaculty(Long facultyId, String dayOfWeek, Long slotDefinitionId) {
+        return facultyIndex.getOrDefault(facultyKey(facultyId, dayOfWeek, slotDefinitionId), Collections.emptyList());
+    }
+
+    /**
+     * Gets all sessions for a batch at a given day+slot.
+     */
+    public List<ScheduledSession> getSessionsByBatch(Long batchId, String dayOfWeek, Long slotDefinitionId) {
+        return batchIndex.getOrDefault(batchKey(batchId, dayOfWeek, slotDefinitionId), Collections.emptyList());
+    }
+
+    /**
+     * Gets all sessions for a faculty on a given day.
+     */
+    public List<ScheduledSession> getSessionsByFacultyAndDay(Long facultyId, String dayOfWeek) {
+        List<ScheduledSession> result = new ArrayList<>();
+        String prefix = "F" + KEY_DELIMITER + facultyId + KEY_DELIMITER + dayOfWeek + KEY_DELIMITER;
+        for (var entry : facultyIndex.entrySet()) {
+            if (entry.getKey().startsWith(prefix)) {
+                result.addAll(entry.getValue());
             }
         }
         return result;
     }
 
     /**
-     * Get all occupants in the draft (used for weekly workload and full-draft checks).
-     *
-     * @param excludeSessionId the session ID to exclude
-     * @return list of all occupants
+     * Gets all sessions for a faculty in the entire draft.
      */
-    public List<Occupant> allOccupants(Long excludeSessionId) {
-        if (excludeSessionId == null) {
-            return new ArrayList<>(allOccupants);
-        }
-        List<Occupant> result = new ArrayList<>(allOccupants.size());
-        for (Occupant o : allOccupants) {
-            if (!excludeSessionId.equals(o.sessionId())) {
-                result.add(o);
+    public List<ScheduledSession> getSessionsByFaculty(Long facultyId) {
+        List<ScheduledSession> result = new ArrayList<>();
+        String prefix = "F" + KEY_DELIMITER + facultyId + KEY_DELIMITER;
+        for (var entry : facultyIndex.entrySet()) {
+            if (entry.getKey().startsWith(prefix)) {
+                result.addAll(entry.getValue());
             }
         }
         return result;
+    }
+
+    /**
+     * Checks if a room+day+slot combination is occupied.
+     */
+    public boolean isRoomOccupied(Long roomId, String dayOfWeek, Long slotDefinitionId, Long excludeSessionId) {
+        var sessions = getSessionsByRoom(roomId, dayOfWeek, slotDefinitionId);
+        return sessions.stream().anyMatch(s -> !s.getId().equals(excludeSessionId));
+    }
+
+    /**
+     * Checks if a faculty+day+slot combination is occupied.
+     */
+    public boolean isFacultyOccupied(Long facultyId, String dayOfWeek, Long slotDefinitionId, Long excludeSessionId) {
+        var sessions = getSessionsByFaculty(facultyId, dayOfWeek, slotDefinitionId);
+        return sessions.stream().anyMatch(s -> !s.getId().equals(excludeSessionId));
+    }
+
+    /**
+     * Checks if a batch+day+slot combination is occupied.
+     */
+    public boolean isBatchOccupied(Long batchId, String dayOfWeek, Long slotDefinitionId, Long excludeSessionId) {
+        var sessions = getSessionsByBatch(batchId, dayOfWeek, slotDefinitionId);
+        return sessions.stream().anyMatch(s -> !s.getId().equals(excludeSessionId));
     }
 }

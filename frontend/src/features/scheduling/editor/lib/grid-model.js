@@ -2,7 +2,7 @@
 // draft's sessions with staged (unsaved) moves overlaid, derives the day/slot axes, and
 // enumerates empty cells for alternative-slot probing. Pure functions — no I/O.
 
-import { DAYS } from '../constants/conflict-types';
+const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 export const cellKey = (day, slotId) => `${day}|${slotId}`;
 

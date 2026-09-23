@@ -1,47 +1,87 @@
 package com.utms.scheduling.conflict;
 
+import java.util.List;
+import java.util.Set;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * A single real-time conflict returned by the conflict detection engine
- * (A4-16, design FR-4). Transient — not persisted (PD-97).
- *
- * <p>Carries a machine-readable {@link ConflictType}, the identifiers of the
- * entities involved, the (day, slot) at which the conflict occurs, and a
- * human-readable description that never exposes internal details.
- *
- * <p>Design spec: { type, involvedFacultyId?, involvedRoomId?, involvedBatchId?,
- * involvedSectionId?, involvedSessionId?, dayOfWeek, slotDefinitionId, description }
+ * DTO representing a detected conflict for API responses and WebSocket broadcasts.
+ * 
+ * Design: A4-16 §2.2 ConflictDto
  */
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConflictDto {
 
-    /** The type of conflict detected. */
-    private final ConflictType type;
+    /** Conflict type (e.g., FACULTY_DOUBLE_BOOKING) */
+    private ConflictType type;
 
-    /** The faculty involved in the conflict (if applicable). */
-    private final Long involvedFacultyId;
+    /** Human-readable label (e.g., "Faculty double-booking") */
+    private String label;
 
-    /** The room involved in the conflict (if applicable). */
-    private final Long involvedRoomId;
+    /** Internal (within draft) or CROSS_DRAFT */
+    private String scope;
 
-    /** The batch involved in the conflict (if applicable). */
-    private final Long involvedBatchId;
+    /** Session that triggered the conflict */
+    private Long sessionId;
 
-    /** The section involved in the conflict (if applicable). */
-    private final Long involvedSectionId;
+    /** Day of week (MONDAY, TUESDAY, etc.) */
+    private String dayOfWeek;
 
-    /** The existing session that conflicts with the proposed placement. */
-    private final Long involvedSessionId;
+    /** Slot definition ID */
+    private Long slotDefinitionId;
 
-    /** The day of week where the conflict occurs (e.g., "MONDAY"). */
-    private final String dayOfWeek;
+    /** Room ID involved in conflict */
+    private Long roomId;
 
-    /** The slot definition ID where the conflict occurs. */
-    private final Long slotDefinitionId;
+    /** Faculty ID involved in conflict */
+    private Long facultyId;
 
-    /** Human-readable description for the editor UI. Never exposes internals. */
-    private final String description;
+    /** Batch ID involved in conflict */
+    private Long batchId;
+
+    /** Section ID involved in conflict */
+    private Long sectionId;
+
+    /** Session IDs of conflicting sessions (for resolution UI) */
+    private List<Long> conflictingSessionIds;
+
+    /** Human-readable description for UI display */
+    private String description;
+
+    /**
+     * Creates a ConflictDto from a conflict result.
+     */
+    public static ConflictDto from(
+            ConflictType type,
+            Long sessionId,
+            String dayOfWeek,
+            Long slotDefinitionId,
+            Long roomId,
+            Long facultyId,
+            Long batchId,
+            Long sectionId,
+            List<Long> conflictingSessionIds,
+            String description) {
+        return ConflictDto.builder()
+                .type(type)
+                .label(type.getLabel())
+                .scope(type.getScope().getLabel())
+                .sessionId(sessionId)
+                .dayOfWeek(dayOfWeek)
+                .slotDefinitionId(slotDefinitionId)
+                .roomId(roomId)
+                .facultyId(facultyId)
+                .batchId(batchId)
+                .sectionId(sectionId)
+                .conflictingSessionIds(conflictingSessionIds)
+                .description(description)
+                .build();
+    }
 }

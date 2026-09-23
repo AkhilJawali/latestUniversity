@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import {
-  DEFAULT_SLOT_DURATION_MINUTES,
-  MAX_ALTERNATIVE_PROBES,
-} from '../constants/conflict-types';
 import { cellKey } from './grid-model';
+
+// Constants previously in conflict-types.js
+const DEFAULT_SLOT_DURATION_MINUTES = 60;
+const MAX_ALTERNATIVE_PROBES = 10;
 
 // A4-15 §7 — placement helpers. Turn a (session, target cell) into the A4-16
 // ProposedPlacementRequest, validate it before any request (AC-5), resolve the slot

@@ -1,6 +1,21 @@
 import PropTypes from 'prop-types';
 
-import { conflictLabel } from '../constants/conflict-types';
+// Conflict type labels (previously in conflict-types.js)
+const CONFLICT_LABELS = {
+  FACULTY_DOUBLE_BOOKING: 'Faculty double-booking',
+  ROOM_DOUBLE_BOOKING: 'Room double-booking',
+  BATCH_CLASH: 'Batch clash',
+  ROOM_CAPACITY: 'Room capacity exceeded',
+  FACULTY_DAILY_HOURS: 'Faculty daily hours exceeded',
+  FACULTY_WEEKLY_HOURS: 'Faculty weekly hours exceeded',
+  FACULTY_CONSECUTIVE_HOURS: 'Faculty consecutive hours exceeded',
+  TRAVEL_TIME: 'Travel time violation',
+  HARD_BLOCK: 'Hard block violation',
+};
+
+function conflictLabel(type) {
+  return CONFLICT_LABELS[type] || type;
+}
 
 // A4-15 §8 (FR-8) — shows conflicts for the editor. Two groups: the last attempted
 // placement's conflicts (top, actionable) and the full-draft conflict list. Each row shows
