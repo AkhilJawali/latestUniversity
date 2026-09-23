@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -134,11 +135,12 @@ class SectionServiceTest {
 
         when(batchRepository.findByIdAndDeletedAtIsNull(batchId)).thenReturn(Optional.of(batch));
         when(sectionRepository.existsBySectionIdentifierAndBatchIdAndDeletedAtIsNull("A", batchId)).thenReturn(false);
+        when(sectionRepository.findAllByBatchIdAndDeletedAtIsNull(batchId)).thenReturn(List.of());
 
         BusinessRuleViolationException exception = assertThrows(BusinessRuleViolationException.class,
                 () -> sectionService.create(batchId, request));
 
-        assertTrue(exception.getMessage().contains("Sub-strength"));
+        assertTrue(exception.getMessage().contains("Total section sub-strength"));
         assertTrue(exception.getMessage().contains("100"));
         assertTrue(exception.getMessage().contains("60"));
         verify(sectionRepository, never()).save(any());
@@ -164,11 +166,12 @@ class SectionServiceTest {
         section.setBatch(batch);
 
         when(sectionRepository.findByIdAndDeletedAtIsNull(sectionId)).thenReturn(Optional.of(section));
+        when(sectionRepository.findAllByBatchIdAndDeletedAtIsNull(1L)).thenReturn(List.of(section));
 
         BusinessRuleViolationException exception = assertThrows(BusinessRuleViolationException.class,
                 () -> sectionService.update(sectionId, request));
 
-        assertTrue(exception.getMessage().contains("Sub-strength"));
+        assertTrue(exception.getMessage().contains("Total section sub-strength"));
         assertTrue(exception.getMessage().contains("100"));
         assertTrue(exception.getMessage().contains("60"));
         verify(sectionRepository, never()).save(any());

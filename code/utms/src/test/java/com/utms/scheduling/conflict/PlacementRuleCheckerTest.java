@@ -212,7 +212,7 @@ class PlacementRuleCheckerTest {
         // Fortnightly Group A session
         ScheduledSession existing = createSession(1L, 100L, 200L, 300L, "MONDAY", 1L);
         existing.setRecurrenceType(RecurrenceType.FORTNIGHTLY);
-        existing.setWeekGroup(WeekGroup.GROUP_A);
+        existing.setWeekGroup(WeekGroup.WEEK_A);
         index.addSession(existing);
         
         // Fortnightly Group B session in same slot - should NOT conflict
@@ -237,8 +237,7 @@ class PlacementRuleCheckerTest {
         // Move the same session to same slot (should not conflict with itself)
         ProposedPlacementRequest request = createRequest(1L, 100L, 200L, 300L, "MONDAY", 1L);
         
-        when(recurrenceEvaluator.everCoOccur(any(), any())).thenReturn(true);
-        
+        // Note: recurrenceEvaluator is NOT called when session is checking against itself
         List<ConflictDto> conflicts = ruleChecker.checkPlacement(request, existing, index);
         
         // Should not report conflict with itself
