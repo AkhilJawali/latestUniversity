@@ -79,9 +79,11 @@ The 4 default subtasks are created when the story is created. Development subtas
 - Development subtasks are created **at the same level** as the default subtasks (all are Subtask type under the Story).
 - Kiro completes the development subtasks one by one.
 - Once all development subtasks are completed:
-  - **Unit Testing** is performed (created as a subtask).
+  - **Unit Testing** is performed (created as a separate subtask at the same level as dev subtasks, NOT nested inside them).
   - Any issues found are documented, fixed, and retested.
-  - A **Code Coverage** subtask is created and a coverage document is generated.
+  - A **Code Coverage** subtask is created (at the same level as dev subtasks) and a coverage document is generated.
+
+**Important:** Unit Test and Code Coverage subtasks are siblings to development subtasks — they are NOT children of any development subtask. All subtasks (default 4, development, unit test, code coverage) are created directly under the User Story.
 
 #### Code Coverage Document
 
